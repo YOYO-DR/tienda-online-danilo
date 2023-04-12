@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+# si existe in django WEBSITE_HOSTNAME en el entorno, utiliza la config de produccion
+settings_module = 'config.production' if 'WEBSITE_HOSTNAME' in os.environ else 'config.settings'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
 application = get_wsgi_application()
