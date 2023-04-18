@@ -11,7 +11,7 @@ class Customer(models.Model):
     email = models.CharField(max_length=200, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{str(self.user.id)} {self.name}'
 
 
 class Product(models.Model):
@@ -21,4 +21,4 @@ class Product(models.Model):
     photo = models.ImageField(upload_to="products/%Y/%m", default=False)
 
     def __str__(self):
-        return self.name
+        return f'{self.id} {self.name}'

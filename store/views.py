@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from .models import Product
-
+from django.views.generic import ListView
 # Create your views here.
 
-def store(request):
-    products = Product.objects.all()
-    context = {'products':products}
-    return render(request, 'store/store.html', context)
+
+class store(ListView):
+    model = Product
+    template_name = 'store/store.html'
+
+    # def get(self, *args, **kwargs):  # hacer la busqueda
 
 
 def cart(request):
