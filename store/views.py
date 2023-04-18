@@ -8,7 +8,7 @@ class store(ListView):
     model = Product
     template_name = 'store/store.html'
 
-    # def get(self, *args, **kwargs):  # hacer la busqueda
+    # def get(self, request,*args, **kwargs):  # hacer la busqueda
 
 
 def cart(request):
