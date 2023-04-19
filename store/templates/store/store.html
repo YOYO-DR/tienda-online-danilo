@@ -1,6 +1,9 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
 <div class="row">
   {% for product in object_list %}
+  {% if user.is_authenticated %}
+  <h1>Bienvenido {{user.username}}</h1>
+  {% endif %}
   <div class="col-lg-4">
     <img class="thumbnail img-fluid" src="{{product.photo.url}}" />
     <div class="box-element product">

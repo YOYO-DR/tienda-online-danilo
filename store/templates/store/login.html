@@ -1,0 +1,14 @@
+{% extends 'store/main.html' %} {% block content %}
+<h2>Iniciar sesión</h2>
+<form action="." method="post">
+  {% csrf_token %} 
+  {% if messages %} 
+    {% for msj in messages %}
+      <p>{{msj}}</p>
+    {% endfor %} 
+  {% endif %} 
+  {{form.as_p}}
+  <button class="btn btn-success" type="submit">Iniciar sesión</button>
+  <a class="btn btn-danger" href="{% url 'store' %}">Cancelar</a>
+</form>
+{% endblock content %}
