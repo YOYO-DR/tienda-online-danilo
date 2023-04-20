@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
 from .models import Product
 from django.views.generic import ListView
+from django.contrib.auth.views import LoginView
 # estos mensajes se guardan en el request
-from django.contrib import messages
+#from django.contrib import messages
 # users
 from .form import UserRegisterForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 
 
-class store(ListView):
+class Store(ListView):
     model = Product
     template_name = 'store/store.html'
 
@@ -28,26 +29,18 @@ def register(request):
     context['form'] = form
     return render(request, 'store/register.html', context)
 
+class Ingresar(LoginView):
+    template_name='store/login.html'
 
-def ingresar(request):
-    context = {}
-    if request.method == 'POST':
-        form = AuthenticationForm(request, request.POST)
-        if form.is_valid():
-            user = authenticate(
-                username=request.POST['username'], password=request.POST['password'])
-            if user is not None:
-                login(request, user)
-                return redirect('store')
-            else:
-                messages.error(
-                    request, 'El usuario o contraseña son incorrectos')
-        else:
-            messages.error(request, 'El usuario o contraseña son incorrectos')
-    else:
-        form = AuthenticationForm()
-    context['form'] = form
-    return render(request, 'store/login.html', context)
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated: #si esta logueado lo mando a la vista principal
+            return redirect('store')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs) #recupero el context para enviar datos
+        context['title']='Iniciar sesión'
+        return context
 
 
 def cart(request):
