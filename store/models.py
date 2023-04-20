@@ -22,3 +22,14 @@ class Product(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.name}'
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, null=False, blank=False)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, null=False, blank=False)
+    cantidad = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.user.user.username} - {self.product.name}'

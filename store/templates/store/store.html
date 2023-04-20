@@ -12,6 +12,7 @@
       </h4>
       <hr />
       <button
+      id="{{product.id}}"
         data-product="{{product.id}}"
         data-action="add"
         class="btn btn-outline-secondary add-btn update-cart"
@@ -27,3 +28,33 @@
   {% endfor %}
 </div>
 {% endblock content %}
+{% block js %}
+<script>
+$(document).ready(function(){
+  $('.add-btn').click(function(){
+    var productId = $(this).data('product');
+    var userId = $(this).data('user');
+    var url = window.location.pathname;
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({
+        'product_id': productId,
+        'user_id': userId,
+        'action':'add_cart'
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Actualizar el carrito o mostrar un mensaje de éxito
+      location.href = '{{cart_url}}'
+    })
+    .catch(error => console.error(error));
+  });
+});
+</script>
+{% endblock js %}
