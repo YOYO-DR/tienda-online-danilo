@@ -1,4 +1,5 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
+{% if object_list %} 
 <div class="box-element">
   <div class="cart-row">
     <div style="flex: 2"></div>
@@ -30,6 +31,10 @@
   </div>
   {% endfor %}
 </div>
+{% else %}
+<h2>No hay productos en el carrito</h2>
+{% endif %}
+
 {% endblock content %} {% block js %}
 <script></script>
 {% endblock js %}
