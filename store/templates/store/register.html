@@ -1,16 +1,19 @@
-{% extends 'store/main.html' %}
+{% extends 'store/main.html' %} 
 {% block content %}
+<div class="d-flex align-items-center flex-column">
 <h2>Registrarse</h2>
-<form action="." method="post">
-  {% if messages %}
-  {% for msj in messages %}
-  <p>{{msj}}
-  </p>
+<form action="." method="post" class="d-flex align-items-center flex-column">
+  {% csrf_token %} 
+  {% for field in form.visible_fields %}
+  <div class="row w-75">
+    <label for="">{{field.label}}: {{field}}</label>
+  </div>
   {% endfor %}
-  {% endif %}
-{% csrf_token %}
-{{form.as_p}}
-<button type="submit">Registrar</button>
-<button type="reset">Borrar</button>
+  <div class="row d-flex justify-content-between w-75">
+    <button type="submit" class="btn btn-success">Registrar</button>
+  <a class="btn btn-danger" href="{% url 'store' %}">Cancelar</a>
+  </div>
+  
 </form>
+</div>
 {% endblock content %}

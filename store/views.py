@@ -48,6 +48,8 @@ def register(request):
             form.save()
             # messages.success(request, f"Usuario {username} creado")
             return redirect('store')
+        else:
+            context['error']='Ha ocurrido un error'
     else:
         form = UserRegisterForm()
     context['form'] = form

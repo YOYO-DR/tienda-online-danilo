@@ -1,8 +1,22 @@
-{% extends 'store/main.html' %} {% block content %}
-<h2>Iniciar sesión</h2>
-<form action="." method="post">
-  {% csrf_token %} {{form.as_p}}
-  <button class="btn btn-success" type="submit">Iniciar sesión</button>
+{% extends 'store/main.html' %}
+{% block content %}
+<div class="d-flex align-items-center flex-column">
+  <h2>Iniciar sesión</h2>
+  <form action="." method="post" class="d-flex align-items-center flex-column">
+  {% csrf_token %} 
+  {% for field in form.visible_fields %}
+  <div class="row w-75">
+    <label for="">{{field.label}}: {{field}}</label>
+  </div>
+  {% endfor %}
+  
+  
+  <div class="row d-flex justify-content-between w-75">
+    <button class="btn btn-success" type="submit">Iniciar sesión</button>
   <a class="btn btn-danger" href="{% url 'store' %}">Cancelar</a>
+  </div>
+  
 </form>
+</div>
+
 {% endblock content %}
