@@ -1,32 +1,41 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from .models import Product
+from .models import Product,Cart
 from django.views.generic import ListView
 from django.contrib.auth.views import LoginView
-# estos mensajes se guardan en el request
-# from django.contrib import messages
-# users
 from .form import UserRegisterForm
 from django.http import JsonResponse
 from django.contrib.auth import login, logout, authenticate
+import json #para manejar el body del json
 
-
-class Store(ListView):
+class StoreView(ListView):
     model = Product
     template_name = 'store/store.html'
 
     def post(self, request, *args, **kwargs):
-        if request.POST['action'] == 'add_cart':
-            print('Llego')
-        print('No llego')
-        print(request.POST)
-        return JsonResponse({'success': True})
+        data=json.load(request) # con esta funcion lo convierto a diccionario
+        if data['action']=='add_cart':
+            product_id=data['product_id']
+            user_id=data['user_id']
+            produ=Cart.objects.filter(user_id=user_id,product_id=product_id).exists()
+            if produ:
+              carri=Cart.objects.get(user_id=user_id,product_id=product_id)
+              carri.cantidad+=1
+              carri.total=carri.cantidad*carri.product.price
+              carri.save()
+            else:
+              precioProduct=Product.objects.get(id=product_id).price
+              Cart(user_id=user_id,product_id=product_id,cantidad=1,total=precioProduct).save()
+            return JsonResponse({'success':True})
+        else:
+          return JsonResponse({'success':False})
 
     def get_context_data(self, **kwargs):
         # recupero el context para enviar datos
         context = super().get_context_data(**kwargs)
         context['title'] = 'Carrito'
         context['cart_url'] = reverse_lazy('cart')
+        context['can_carrito']=Cart.objects.filter(user_id=self.request.user.id).count()
         return context
 
 
@@ -45,7 +54,7 @@ def register(request):
     return render(request, 'store/register.html', context)
 
 
-class Ingresar(LoginView):
+class IngresarView(LoginView):
     template_name = 'store/login.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -60,9 +69,18 @@ class Ingresar(LoginView):
         return context
 
 
-def cart(request):
-    context = {}
-    return render(request, 'store/cart.html', context)
+class CartView(ListView):
+  model = Cart
+  template_name = 'store/cart.html'
+
+  def dispatch(self, request, *args, **kwargs):
+      if not request.user.is_authenticated:
+          return redirect('login')
+      return super().dispatch(request, *args, **kwargs)
+
+  def get_queryset(self):
+      query=Cart.objects.filter(user_id=self.request.user.id)
+      return query
 
 
 def checkout(request):

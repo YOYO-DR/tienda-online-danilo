@@ -1,27 +1,35 @@
-{% extends 'store/main.html' %}
-{% load static %}
-{% block content %}
+{% extends 'store/main.html' %} {% load static %} {% block content %}
 <div class="box-element">
-	<div class="cart-row">
-		<div style="flex:2"></div>
-		<div style="flex:2"><strong>Item</strong></div>
-		<div style="flex:1"><strong>Price</strong></div>
-		<div style="flex:1"><strong>Quantity</strong></div>
-		<div style="flex:1"><strong>Total</strong></div>
-	</div>
+  <div class="cart-row">
+    <div style="flex: 2"></div>
+    <div style="flex: 2"><strong>Item</strong></div>
+    <div style="flex: 1"><strong>Price</strong></div>
+    <div style="flex: 1"><strong>Quantity</strong></div>
+    <div style="flex: 1"><strong>Total</strong></div>
+  </div>
+  {% for p in object_list %}
+  <div class="cart-row">
+    <div style="flex: 2">
+      <img class="row-image" src="{{p.product.photo.url}}" />
+    </div>
+    <div style="flex: 2"><p>{{p.product.name|title}}</p></div>
+    <div style="flex: 1">
+      <p>$ <span id="can-uni">{{p.product.price}}</span></p>
+    </div>
+    <div style="flex: 1">
+      <p class="quantity">{{p.cantidad}}</p>
+      <div class="quantity">
+        <img class="chg-quantity" src="{% static  'images/arrow-up.png' %}" />
 
-	<div class="cart-row">
-		<div style="flex:2"><img class="row-image" src="{% static 'images/placeholder.png' %}"></div>
-		<div style="flex:2"><p>Product 1</p></div>
-		<div style="flex:1"><p>$20</p></div>
-		<div style="flex:1">
-			<p class="quantity">2</p>
-			<div class="quantity">
-				<img class="chg-quantity" src="{% static  'images/arrow-up.png' %}">
-
-				<img class="chg-quantity" src="{% static  'images/arrow-down.png' %}">
-			</div>
-		</div>
-		<div style="flex:1"><p>$32</p></div>
-	</div>
-{% endblock content %}
+        <img class="chg-quantity" src="{% static  'images/arrow-down.png' %}" />
+      </div>
+    </div>
+    <div style="flex: 1">
+      <p>$<span id="can-total">{{p.total}}</span></p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock content %} {% block js %}
+<script></script>
+{% endblock js %}

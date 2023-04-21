@@ -44,15 +44,15 @@
           <a href="{% url 'cerrar' %}" class="btn btn-success mr-1">Cerrar</a>
           {% else %}
           <a href="{% url 'login' %}" class="btn btn-success mr-1">Login</a>
-
           <a href="{% url 'register' %}" class="btn btn-warning">Registro</a>
           {% endif %}
-          
-
           <a href="{% url 'cart' %}">
             <img id="cart-icon" src="{% static 'images/cart.png' %}" />
           </a>
-          <p id="cart-total">0</p>
+          {% if user.is_authenticated %} {% if request.resolver_match.url_name == "cart" %} 
+          {% else %}
+          <p id="cart-total">{{can_carrito}}</p>
+          {% endif %} {% endif %}
         </div>
       </div>
     </nav>

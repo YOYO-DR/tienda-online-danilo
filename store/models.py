@@ -26,10 +26,13 @@ class Product(models.Model):
 
 class Cart(models.Model):
     user = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, null=False, blank=False)
+        User, on_delete=models.CASCADE, null=False, blank=False)
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, null=False, blank=False)
-    cantidad = models.IntegerField(default=1)
+    cantidad = models.IntegerField(default=0)
+    total=models.DecimalField(max_digits=12,decimal_places=1)
 
     def __str__(self):
-        return f'{self.user.user.username} - {self.product.name}'
+        return f'{self.user.username} - {self.product.name}'
+    class Meta:
+        ordering = ['-product']
