@@ -1,4 +1,5 @@
 {% extends 'store/main.html' %} 
+{% load widget_tweaks %}
 {% block content %}
 <div class="d-flex align-items-center flex-column">
 <h2>Registrarse</h2>
@@ -6,14 +7,14 @@
   {% csrf_token %} 
   {% for field in form.visible_fields %}
   <div class="row w-75">
-    <label for="">{{field.label}}: {{field}}</label>
+    <label for="" class="form-label">{{field.label}}:</label>
+    {{field|add_class:'form-control'}}
   </div>
   {% endfor %}
   <div class="row d-flex justify-content-between w-75">
     <button type="submit" class="btn btn-success">Registrar</button>
   <a class="btn btn-danger" href="{% url 'store' %}">Cancelar</a>
   </div>
-  
 </form>
 </div>
 {% endblock content %}
