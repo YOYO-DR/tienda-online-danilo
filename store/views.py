@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Product,Cart
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.contrib.auth.views import LoginView
 from .form import UserRegisterForm
 from django.http import JsonResponse
 from django.contrib.auth import login, logout, authenticate
 import json #para manejar el body del json
 
+#vista de los articulos
 class StoreView(ListView):
     model = Product
     template_name = 'store/store.html'
@@ -33,12 +34,12 @@ class StoreView(ListView):
     def get_context_data(self, **kwargs):
         # recupero el context para enviar datos
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Carrito'
+        context['title'] = 'Store'
         context['cart_url'] = reverse_lazy('cart')
         context['can_carrito']=Cart.objects.filter(user_id=self.request.user.id).count()
         return context
 
-
+#regitro
 def register(request):
     context = {}
     if request.method == 'POST':
@@ -53,9 +54,10 @@ def register(request):
     else:
         form = UserRegisterForm()
     context['form'] = form
+    context['title']='Registro'
     return render(request, 'store/register.html', context)
 
-
+#login
 class IngresarView(LoginView):
     template_name = 'store/login.html'
 
@@ -70,7 +72,7 @@ class IngresarView(LoginView):
         context['title'] = 'Iniciar sesión'
         return context
 
-
+#carrito
 class CartView(ListView):
   model = Cart
   template_name = 'store/cart.html'
@@ -83,13 +85,33 @@ class CartView(ListView):
   def get_queryset(self):
       query=Cart.objects.filter(user_id=self.request.user.id)
       return query
+  def get_context_data(self, **kwargs):
+      context=super().get_context_data(**kwargs)
+      canCarrito=self.get_queryset().count()
+      if canCarrito==0:
+        context['title']='Carrito'
+      else:
+        context['title']=f'Carrito {canCarrito}'
+      return context
 
-
+#vista para comprar
 def checkout(request):
     context = {}
     return render(request, 'store/checkout.html', context)
 
-
+#cerrar sesión
 def cerrar(request):
     logout(request)
     return redirect('login')
+
+#vista detail de los productos
+class ProductDetailView(DetailView):
+    model = Product
+    template_name='store/product_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        context['title']=context['object'].name
+        context['cart_url'] = reverse_lazy('cart')
+        context['store_url'] = reverse_lazy('store')
+        return context

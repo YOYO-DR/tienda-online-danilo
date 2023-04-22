@@ -7,11 +7,15 @@
     <div style="flex: 1"><strong>Price</strong></div>
     <div style="flex: 1"><strong>Quantity</strong></div>
     <div style="flex: 1"><strong>Total</strong></div>
+    <div style="flex: 1"><strong>Opciones</strong></div>
   </div>
   {% for p in object_list %}
   <div class="cart-row">
     <div style="flex: 2">
-      <img class="row-image" src="{{p.product.photo.url}}" />
+      <a href="{% url 'detalle_product' p.product.id %}">
+        <img class="row-image" src="{{p.product.photo.url}}"/>
+      </a>
+      
     </div>
     <div style="flex: 2"><p>{{p.product.name|title}}</p></div>
     <div style="flex: 1">
@@ -20,13 +24,15 @@
     <div style="flex: 1">
       <p class="quantity">{{p.cantidad}}</p>
       <div class="quantity">
-        <img class="chg-quantity" src="{% static  'images/arrow-up.png' %}" />
-
-        <img class="chg-quantity" src="{% static  'images/arrow-down.png' %}" />
+        <img class="chg-quantity" src="{% static 'images/arrow-up.png' %}" />
+        <img class="chg-quantity" src="{% static 'images/arrow-down.png' %}" />
       </div>
     </div>
     <div style="flex: 1">
-      <p>$<span id="can-total">{{p.total}}</span></p>
+      <p>${{p.total}}</p>
+    </div>
+    <div style="flex: 1">
+      <a class="btn btn-danger" href="{% url 'detalle_product' p.product.id %}">Eliminar</a>
     </div>
   </div>
   {% endfor %}

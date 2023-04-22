@@ -7,11 +7,11 @@
   {% csrf_token %} 
   {% for field in form.visible_fields %}
   <div class="row w-75">
-    <label for="" class="form-label">{{field.label}}:</label>
+    <label for="{{field.label}}" class="form-label">{{field.label}}:</label>
     {{field|add_class:'form-control'}}
   </div>
   {% endfor %}
-  <div class="row d-flex justify-content-between w-75">
+  <div class="row d-flex justify-content-between w-75 mt-2">
     <button type="submit" class="btn btn-success">Registrar</button>
   <a class="btn btn-danger" href="{% url 'store' %}">Cancelar</a>
   </div>

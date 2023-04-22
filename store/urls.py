@@ -10,4 +10,5 @@ urlpatterns = [
     path('register/', register, name="register"),
     path('login/', IngresarView.as_view(), name="login"),
     path('cerrar/', cerrar, name="cerrar"),
+    path('product/<int:pk>/',ProductDetailView.as_view(),name='detalle_product')
 ]
