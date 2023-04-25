@@ -13,6 +13,14 @@ class StoreView(ListView):
     model = Product
     template_name = 'store/store.html'
 
+    def get_queryset(self):
+        busqueda = self.request.GET.get('busqueda')
+        if busqueda:
+            query=Product.objects.filter(name__icontains=busqueda)
+            return query
+        else:
+          return super().get_queryset()
+  
     def post(self, request, *args, **kwargs):
         data=json.load(request) # con esta funcion lo convierto a diccionario
         if data['action']=='add_cart':
