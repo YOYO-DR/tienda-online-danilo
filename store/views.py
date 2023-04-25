@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Product,Cart
 from django.views.generic import ListView, DetailView, FormView
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from .form import UserRegisterForm
 from django.http import JsonResponse
 from django.contrib.auth import login, logout, authenticate
@@ -30,27 +30,10 @@ class StoreView(ListView):
         if not context['object_list']:
             busqueda = self.request.GET.get('busqueda')
             if busqueda:
-              context['mensaje_busqueda']=f'Producto no encontrado "{busqueda}"'
+              context['mensaje_busqueda']=f'Producto no encontrado con "{busqueda}"'
         return context
 
-#regitro
-def register(request):
-    context = {}
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            # username = form.cleaned_data["username"]
-            form.save()
-            # messages.success(request, f"Usuario {username} creado")
-            return redirect('store')
-        else:
-            context['error']='Ha ocurrido un error'
-    else:
-        form = UserRegisterForm()
-    context['form'] = form
-    context['title']='Registro'
-    return render(request, 'store/register.html', context)
-
+#registro
 class RegisterForm(FormView):
   form_class = UserRegisterForm
   template_name = 'store/register.html'
@@ -116,11 +99,6 @@ class CartView(ListView):
 def checkout(request):
     context = {}
     return render(request, 'store/checkout.html', context)
-
-#cerrar sesión
-def cerrar(request):
-    logout(request)
-    return redirect('login')
 
 #vista detail de los productos
 class ProductDetailView(DetailView):
