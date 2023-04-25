@@ -3,6 +3,18 @@
 {% block content %}
 <div class="d-flex align-items-center flex-column">
 <h2>Registrarse</h2>
+{% comment %} Si hay errores de los inputs {% endcomment %}
+  {% if form.errors %}
+    {% for field in form %}
+      {% for error in field.errors %}
+        <p class="text-danger">{{ error }}</p>
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+  {% comment %} Errores que no son de los campos {% endcomment %}
+  {% for error in form.non_field_errors %}
+    <p class="text-danger text-center">{{ error }}</p>
+  {% endfor %}
 <form action="." method="post" class="d-flex align-items-center flex-column">
   {% csrf_token %} 
   {% for field in form.visible_fields %}

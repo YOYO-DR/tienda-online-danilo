@@ -20,37 +20,3 @@
       {% endif %}
 </div>
 {% endblock content %}
-{% block js %}
-<script>
-  $(document).ready(function () { //cargo la función cuando se carga el documento
-    $(".add-btn").click(function () { //evento click
-      var productId = $(this).data("product");//obtengo el id del producto
-      var userId = {{user.id}}; //id del usuario
-      var url = '{{store_url}}'; //a donde voy a mandar la soli
-      fetch(url, {
-        method: "POST", //metodo
-        headers: {
-          "Content-Type": "application/json", //si o si van estos 2 campos
-          "X-CSRFToken": "{{ csrf_token }}",
-        },
-        body: JSON.stringify({//aqui van los datos a enviar
-          product_id: productId,
-          user_id: userId,
-          action: "add_cart"
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Actualiar el carrito o mostrar un mensaje de éxito
-          if(data['success']==false){
-            alert('Error')
-          }else{
-location.href = "{{cart_url}}";//lo redirecciono a la vista del carrito
-          }
-          
-        })
-        .catch((error) => console.error(error));
-    });
-  });
-</script>
-{% endblock js %}

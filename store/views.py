@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Product,Cart
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, FormView
 from django.contrib.auth.views import LoginView
 from .form import UserRegisterForm
 from django.http import JsonResponse
@@ -20,24 +20,6 @@ class StoreView(ListView):
             return query
         else:
           return super().get_queryset()
-  
-    def post(self, request, *args, **kwargs):
-        data=json.load(request) # con esta funcion lo convierto a diccionario
-        if data['action']=='add_cart':
-            product_id=data['product_id']
-            user_id=data['user_id']
-            produ=Cart.objects.filter(user_id=user_id,product_id=product_id).exists()
-            if produ:
-              carri=Cart.objects.get(user_id=user_id,product_id=product_id)
-              carri.cantidad+=1
-              carri.total=carri.cantidad*carri.product.price
-              carri.save()
-            else:
-              precioProduct=Product.objects.get(id=product_id).price
-              Cart(user_id=user_id,product_id=product_id,cantidad=1,total=precioProduct).save()
-            return JsonResponse({'success':True})
-        else:
-          return JsonResponse({'success':False})
 
     def get_context_data(self, **kwargs):
         # recupero el context para enviar datos
@@ -45,6 +27,10 @@ class StoreView(ListView):
         context['title'] = 'Store'
         context['cart_url'] = reverse_lazy('cart')
         context['can_carrito']=Cart.objects.filter(user_id=self.request.user.id).count()
+        if not context['object_list']:
+            busqueda = self.request.GET.get('busqueda')
+            if busqueda:
+              context['mensaje_busqueda']=f'Producto no encontrado "{busqueda}"'
         return context
 
 #regitro
@@ -64,6 +50,30 @@ def register(request):
     context['form'] = form
     context['title']='Registro'
     return render(request, 'store/register.html', context)
+
+class RegisterForm(FormView):
+  form_class = UserRegisterForm
+  template_name = 'store/register.html'
+  success_url = reverse_lazy('store')
+
+  def dispatch(self, request, *args, **kwargs):
+    if request.user.is_authenticated:  # si esta logueado lo mando a la vista principal
+        return redirect('store')
+    return super().dispatch(request, *args, **kwargs)
+  
+  def form_valid(self, form):
+    #ejecuto el guardado del formulario, el cual es una instancia del formulario en el form_class (UserRegisterForm(self.request.POST).save()) pero el form como ya es la instancia del formulario valido, entonces solo se le aplica el save() para guardar el registro, o en este caso al usuario
+    form.save()
+    username = form.cleaned_data['username']
+    password = form.cleaned_data['password1']
+    usuario = authenticate(username=username, password=password)
+    login(self.request, usuario)
+    return redirect('store')
+
+  def get_context_data(self, **kwargs):
+     context = super().get_context_data(**kwargs)
+     context['title']='Registro'
+     return context
 
 #login
 class IngresarView(LoginView):
