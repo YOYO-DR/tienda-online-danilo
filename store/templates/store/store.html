@@ -1,0 +1,35 @@
+{% extends 'store/main.html' %} {% load static %} {% block content %} 
+{% if user.is_authenticated %}
+<h1>Bienvenido {{user.username|title}}</h1>
+{% endif %}
+<div class="row">
+  {% for product in object_list %}
+  <div class="col-lg-4">
+    <img class="thumbnail img-fluid" src="{{product.photo.url}}" />
+    <div class="box-element product">
+      <h4 {% if product.digital %} class="text-success" {% endif %}>
+        <strong>{{product.name|title}}</strong>
+      </h4>
+      <hr />
+      {% if user.is_authenticated %}
+      <button
+        id="{{product.id}}"
+        data-product="{{product.id}}"
+        data-action="add"
+        class="btn btn-outline-secondary add-btn update-cart"
+      >
+        Agregar Carrito
+      </button>
+      {% endif %}
+      
+      <a class="btn btn-outline-success" href="{% url 'detalle_product' product.id %}">Ver</a>
+      <h5 style="display: inline-block; float: right">
+        <strong>${{product.price}}</strong>
+      </h5>
+    </div>
+  </div>
+  {% empty %}
+  <h3>{{mensaje_busqueda}}</h3>
+  {% endfor %}
+</div>
+{% endblock content %} 

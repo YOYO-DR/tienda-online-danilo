@@ -1,0 +1,32 @@
+{% extends 'store/main.html' %} 
+{% load widget_tweaks %}
+{% block content %}
+<div class="d-flex align-items-center flex-column">
+<h2>Registrarse</h2>
+{% comment %} Si hay errores de los inputs {% endcomment %}
+  {% if form.errors %}
+    {% for field in form %}
+      {% for error in field.errors %}
+        <p class="text-danger">{{ error }}</p>
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+  {% comment %} Errores que no son de los campos {% endcomment %}
+  {% for error in form.non_field_errors %}
+    <p class="text-danger text-center">{{ error }}</p>
+  {% endfor %}
+<form action="." method="post" class="d-flex align-items-center flex-column">
+  {% csrf_token %} 
+  {% for field in form.visible_fields %}
+  <div class="row w-75">
+    <label for="{{field.label}}" class="form-label">{{field.label}}:</label>
+    {{field|add_class:'form-control'}}
+  </div>
+  {% endfor %}
+  <div class="row d-flex justify-content-between w-75 mt-2">
+    <button type="submit" class="btn btn-success">Registrar</button>
+  <a class="btn btn-danger" href="{% url 'store' %}">Cancelar</a>
+  </div>
+</form>
+</div>
+{% endblock content %}

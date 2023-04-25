@@ -1,0 +1,45 @@
+{% extends 'store/main.html' %} {% load static %} {% block content %}
+{% if object_list %} 
+<div class="box-element">
+  <div class="cart-row">
+    <div style="flex: 2"></div>
+    <div style="flex: 2"><strong>Item</strong></div>
+    <div style="flex: 1"><strong>Price</strong></div>
+    <div style="flex: 1"><strong>Quantity</strong></div>
+    <div style="flex: 1"><strong>Total</strong></div>
+    <div style="flex: 1"><strong>Opciones</strong></div>
+  </div>
+  {% for p in object_list %}
+  <div class="cart-row">
+    <div style="flex: 2">
+      <a href="{% url 'detalle_product' p.product.id %}">
+        <img class="row-image" src="{{p.product.photo.url}}"/>
+      </a>
+      
+    </div>
+    <div style="flex: 2"><p>{{p.product.name|title}}</p></div>
+    <div style="flex: 1">
+      <p>$ <span id="can-uni">{{p.product.price}}</span></p>
+    </div>
+    <div style="flex: 1">
+      <p class="quantity">{{p.cantidad}}</p>
+      <div class="quantity">
+        <img class="chg-quantity" src="{% static 'images/arrow-up.png' %}" />
+        <img class="chg-quantity" src="{% static 'images/arrow-down.png' %}" />
+      </div>
+    </div>
+    <div style="flex: 1">
+      <p>${{p.total}}</p>
+    </div>
+    <div style="flex: 1">
+      <a class="btn btn-danger" href="{% url 'detalle_product' p.product.id %}">Eliminar</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<h2>No hay productos en el carrito</h2>
+{% endif %}
+
+{% endblock content %} {% block js %}
+{% endblock js %}
