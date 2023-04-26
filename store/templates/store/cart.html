@@ -1,30 +1,29 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %} 
 {% if object_list %}
-<div class="box-element">
-  <div class="cart-row">
-    <div style="flex: 2"></div>
-    <div style="flex: 2"><strong>Item</strong></div>
-    <div style="flex: 1"><strong>Price</strong></div>
-    <div style="flex: 1"><strong>Quantity</strong></div>
-    <div style="flex: 1"><strong>Total</strong></div>
-    <div style="flex: 1"><strong>Opciones</strong></div>
-  </div>
+<div class="shadow">
+  <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Producto</th>
+      <th scope="col">Precio</th>
+      <th scope="col">Cantidad</th>
+      <th scope="col">Total</th>
+      <th scope="col">Opciones</th>
+    </tr>
+  </thead>
   {% for p in object_list %}
-  <div class="cart-row">
-    <div style="flex: 2">
-      <a href="{% url 'detalle_product' p.product.id %}">
+  <tbody>
+    <tr>
+      <th><a href="{% url 'detalle_product' p.product.id %}">
         <img class="row-image" src="{{p.product.photo.url}}" />
-      </a>
-    </div>
-    <div style="flex: 2"><p>{{p.product.name|title}}</p></div>
-    <div style="flex: 1">
-      <p>
+      </a></th>
+      <th><p>{{p.product.name|title}}</p></th>
+      <th><p>
         <span class="text-success">$</span>
         <span id="can-uni">{{p.product.price}}</span>
-      </p>
-    </div>
-    <div style="flex: 1">
-      <p class="quantity">{{p.cantidad}}</p>
+      </p></th>
+      <th><p class="quantity">{{p.cantidad}}</p>
       <div class="quantity flex-column" style="display:inline-flex !important">
         <a href="{% url 'aumentar_item' p.product.id %}"
           ><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"
@@ -37,19 +36,18 @@
           />
         </a>
         {% endif %}
-      </div>
-    </div>
-    <div style="flex: 1">
-      <p><span class="text-success">$</span> {{p.total}}</p>
-    </div>
-    <div style="flex: 1">
-      <a class="btn btn-danger" href="{% url 'delete_item_cart' p.product.id %}"
+      </div></th>
+      <th><p><span class="text-success">$</span> {{p.total}}</p></th>
+      <th><a class="btn btn-danger" href="{% url 'delete_item_cart' p.product.id %}"
         >Eliminar</a
-      >
-    </div>
-  </div>
+      ></th>
+    </tr>
+    
+  </tbody>
   {% endfor %}
+</table>
 </div>
+
 {% else %}
 <h2>No hay productos en el carrito</h2>
-{% endif %} {% endblock content %} {% block js %} {% endblock js %}
+{% endif %} {% endblock content %}

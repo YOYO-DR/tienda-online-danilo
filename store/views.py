@@ -153,7 +153,6 @@ class ProductDetailView(DetailView):
           canCarrito=CartItem.objects.filter(cart=cart).count()
           context['can_carrito']=canCarrito
 
-        context=super().get_context_data(**kwargs)
         context['title']=context['object'].name
         return context
     
@@ -162,7 +161,7 @@ def checkout(request):
     context = {}
     return render(request, 'store/checkout.html', context)
 
-#funcion borrar o mermar valor del carrito
+#funcion borrar valor del carrito
 def cantiCarrito(request,pk):
   #obtengo el producto
   producto=get_object_or_404(Product,id=pk)
@@ -179,7 +178,9 @@ def cantiCarrito(request,pk):
   cart.save()
   return redirect('cart')
 
+#funcion para restar cantidad del cartitem
 def aumentarCantidad(request,pk):
+  print(request.user.is_authenticated)
   #obtengo el producto
   producto=get_object_or_404(Product,id=pk)
   #obtengo el customer del usuario
@@ -200,6 +201,7 @@ def aumentarCantidad(request,pk):
   cart.save()
   return redirect('cart')
 
+#funcion para aumentar cantidad del cartitem
 def disminurCantidad(request,pk):
   #obtengo el producto
   producto=get_object_or_404(Product,id=pk)
@@ -209,7 +211,7 @@ def disminurCantidad(request,pk):
   cart=Cart.objects.get(user=customer)
   #obtengo el cartitem del customer y el producto
   cartItem=CartItem.objects.get(cart=cart,product=producto)
-  if not cartItem.cantidad==1:
+  if not cartItem.cantidad<2:
     #aumento la cantidad
     cartItem.cantidad-=1
     #actualizo el total
