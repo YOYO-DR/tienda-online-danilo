@@ -15,15 +15,15 @@
   {% for p in object_list %}
   <tbody>
     <tr>
-      <th><a href="{% url 'detalle_product' p.product.id %}">
+      <td><a href="{% url 'detalle_product' p.product.id %}">
         <img class="row-image" src="{{p.product.photo.url}}" />
-      </a></th>
-      <th><p>{{p.product.name|title}}</p></th>
-      <th><p>
+      </a></td>
+      <td><p>{{p.product.name|title}}</p></td>
+      <td><p>
         <span class="text-success">$</span>
         <span id="can-uni">{{p.product.price}}</span>
-      </p></th>
-      <th><p class="quantity">{{p.cantidad}}</p>
+      </p></td>
+      <td><p class="quantity">{{p.cantidad}}</p>
       <div class="quantity flex-column" style="display:inline-flex !important">
         <a href="{% url 'aumentar_item' p.product.id %}"
           ><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"
@@ -36,11 +36,11 @@
           />
         </a>
         {% endif %}
-      </div></th>
-      <th><p><span class="text-success">$</span> {{p.total}}</p></th>
-      <th><a class="btn btn-danger" href="{% url 'delete_item_cart' p.product.id %}"
+      </div></td>
+      <td><p><span class="text-success">$</span> {{p.total}}</p></td>
+      <td><a class="btn btn-danger" href="{% url 'delete_item_cart' p.product.id %}"
         >Eliminar</a
-      ></th>
+      ></td>
     </tr>
     
   </tbody>
