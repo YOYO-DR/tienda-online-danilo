@@ -12,14 +12,12 @@
       </h4>
       <hr />
       {% if user.is_authenticated %}
-      <button
-        id="{{product.id}}"
-        data-product="{{product.id}}"
-        data-action="add"
-        class="btn btn-outline-secondary add-btn update-cart"
-      >
-        Agregar Carrito
-      </button>
+      <form method='post' style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_cart">
+        <input type="hidden" name="product" value="{{product.id}}">
+        <input class="btn btn-outline-secondary" type="submit" value="Agregar Carrito">
+      </form>
       {% endif %}
       
       <a class="btn btn-outline-success" href="{% url 'detalle_product' product.id %}">Ver</a>
@@ -33,3 +31,4 @@
   {% endfor %}
 </div>
 {% endblock content %} 
+

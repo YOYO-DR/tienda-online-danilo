@@ -11,7 +11,7 @@ class Customer(models.Model):
     email = models.CharField(max_length=200, null=True)
 
     def __str__(self):
-        return f'{str(self.user.id)} {self.name}'
+        return f'{str(self.id)} {self.name}'
 
 
 class Product(models.Model):
@@ -23,21 +23,23 @@ class Product(models.Model):
     def __str__(self):
         return f'{self.id} {self.name}'
 
-class CartItem(models.Model):
-    producto = models.ForeignKey(
-        Product, on_delete=models.CASCADE, null=False, blank=False)
-    cantidad = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f'{self.producto}'
 
 class Cart(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=False, blank=False)
-    cartItem = models.ForeignKey(
-        Product, on_delete=models.CASCADE, null=False, blank=False)
-    cantidad = models.IntegerField(default=0)
-    total=models.DecimalField(max_digits=12,decimal_places=1)
+        Customer, on_delete=models.CASCADE, null=False, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.user.username}'
+        return f'{self.user.name}'
+
+class CartItem(models.Model):
+    cart=models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, null=False, blank=False)
+    cantidad = models.IntegerField(default=0)
+    total = models.DecimalField(decimal_places=2,max_digits=9,default=0)
+
+
+    def __str__(self):
+        return f'{self.cantidad} / {self.product.name} - {self.cart.user.name}'

@@ -9,14 +9,13 @@
     <strong>${{object.price}}</strong>
   </h5>
   {% if user.is_authenticated %}
-      <button
-        id="{{object.id}}"
-        data-product="{{object.id}}"
-        data-action="add"
-        class="btn btn-outline-secondary add-btn update-cart"
-      >
-        Agregar Carrito
-      </button>
+      <form action="{% url 'store' %}" method='post' style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_cart">
+        <input type="hidden" name="product" value="{{product.id}}">
+        <input type="hidden" name="url_red" value="/cart/">
+        <input class="btn btn-outline-secondary" type="submit" value="Agregar Carrito">
+      </form>
       {% endif %}
 </div>
 {% endblock content %}

@@ -1,5 +1,5 @@
-{% extends 'store/main.html' %} {% load static %} {% block content %}
-{% if object_list %} 
+{% extends 'store/main.html' %} {% load static %} {% block content %} 
+{% if object_list %}
 <div class="box-element">
   <div class="cart-row">
     <div style="flex: 2"></div>
@@ -13,33 +13,43 @@
   <div class="cart-row">
     <div style="flex: 2">
       <a href="{% url 'detalle_product' p.product.id %}">
-        <img class="row-image" src="{{p.product.photo.url}}"/>
+        <img class="row-image" src="{{p.product.photo.url}}" />
       </a>
-      
     </div>
     <div style="flex: 2"><p>{{p.product.name|title}}</p></div>
     <div style="flex: 1">
-      <p>$ <span id="can-uni">{{p.product.price}}</span></p>
+      <p>
+        <span class="text-success">$</span>
+        <span id="can-uni">{{p.product.price}}</span>
+      </p>
     </div>
     <div style="flex: 1">
       <p class="quantity">{{p.cantidad}}</p>
-      <div class="quantity">
-        <img class="chg-quantity" src="{% static 'images/arrow-up.png' %}" />
-        <img class="chg-quantity" src="{% static 'images/arrow-down.png' %}" />
+      <div class="quantity flex-column" style="display:inline-flex !important">
+        <a href="{% url 'aumentar_item' p.product.id %}"
+          ><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"
+        /></a>
+        {% if p.cantidad != 1 %}
+        <a href="{% url 'disminuir_item' p.product.id %}">
+          <img
+            class="chg-quantity"
+            src="{% static 'images/arrow-down.png' %}"
+          />
+        </a>
+        {% endif %}
       </div>
     </div>
     <div style="flex: 1">
-      <p>${{p.total}}</p>
+      <p><span class="text-success">$</span> {{p.total}}</p>
     </div>
     <div style="flex: 1">
-      <a class="btn btn-danger" href="{% url 'detalle_product' p.product.id %}">Eliminar</a>
+      <a class="btn btn-danger" href="{% url 'delete_item_cart' p.product.id %}"
+        >Eliminar</a
+      >
     </div>
   </div>
   {% endfor %}
 </div>
 {% else %}
 <h2>No hay productos en el carrito</h2>
-{% endif %}
-
-{% endblock content %} {% block js %}
-{% endblock js %}
+{% endif %} {% endblock content %} {% block js %} {% endblock js %}

@@ -1,17 +1,49 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse_lazy
-from .models import Product,Cart
-from django.views.generic import ListView, DetailView, FormView
+from .models import Product,Cart,Customer,Cart,CartItem
+from django.views.generic import ListView, DetailView, FormView,DeleteView
 from django.contrib.auth.views import LoginView, LogoutView
 from .form import UserRegisterForm
 from django.http import JsonResponse
 from django.contrib.auth import login, logout, authenticate
 import json #para manejar el body del json
+from django.utils import timezone
 
 #vista de los articulos
 class StoreView(ListView):
     model = Product
     template_name = 'store/store.html'
+
+    def post(self, request,*args, **kwargs):
+      action=request.POST.get('action')
+       #miro si existe un action
+      if action=='add_cart':
+          #obtengo el producto
+          producto_id=request.POST['product']
+          producto=Product.objects.get(id=producto_id)
+          # obtengo el usuario para obtener su customer
+          user=request.user
+          #obtengo el customer o creo el customer y si lo creo, le paso el name a colocar
+          customer,create=Customer.objects.get_or_create(user=user,defaults={'name':request.user.username})
+            # busco el carrito del customer, y si no existe, lo creo
+          cart, create = Cart.objects.get_or_create(user=customer)
+          #en el cart se guarda el objeto y en el create es true si se creo uno, o false si encontro alguno
+          cartItem,create=CartItem.objects.get_or_create(cart=cart,product=producto,defaults={'cantidad':1})
+          if not create:
+             #si lo encuentra, le sumo la cantidad en 1, y le asigno el nuevo total
+             cartItem.cantidad+=1
+             cartItem.total=cartItem.product.price*cartItem.cantidad
+          else:
+             #si lo crea, la cantidad se pone por defecto en 1 y le pongo el total
+             cartItem.total=cartItem.product.price*cartItem.cantidad
+          cartItem.save()
+          now=timezone.now()
+          cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+          cart.save()
+      url_red=request.POST.get('url_red')
+      if url_red:
+         return redirect(url_red)
+      return redirect('store')
 
     def get_queryset(self):
         busqueda = self.request.GET.get('busqueda')
@@ -24,9 +56,16 @@ class StoreView(ListView):
     def get_context_data(self, **kwargs):
         # recupero el context para enviar datos
         context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+          #obtengo la cantidad de productos en el carrito del usuario
+          user=self.request.user
+          customer,create=Customer.objects.get_or_create(user=user,name=user.username)
+          cart,create = Cart.objects.get_or_create(user=customer)
+          canCarrito=CartItem.objects.filter(cart=cart).count()
+          context['can_carrito']=canCarrito
+        
         context['title'] = 'Store'
         context['cart_url'] = reverse_lazy('cart')
-        context['can_carrito']=Cart.objects.filter(user_id=self.request.user.id).count()
         if not context['object_list']:
             busqueda = self.request.GET.get('busqueda')
             if busqueda:
@@ -84,8 +123,12 @@ class CartView(ListView):
       return super().dispatch(request, *args, **kwargs)
 
   def get_queryset(self):
-      query=Cart.objects.filter(user_id=self.request.user.id)
+      user=self.request.user
+      customer,create=Customer.objects.get_or_create(user=user,name=user.username)
+      cart,create = Cart.objects.get_or_create(user=customer)
+      query=CartItem.objects.filter(cart=cart)
       return query
+
   def get_context_data(self, **kwargs):
       context=super().get_context_data(**kwargs)
       canCarrito=self.get_queryset().count()
@@ -95,11 +138,6 @@ class CartView(ListView):
         context['title']=f'Carrito {canCarrito}'
       return context
 
-#vista para comprar
-def checkout(request):
-    context = {}
-    return render(request, 'store/checkout.html', context)
-
 #vista detail de los productos
 class ProductDetailView(DetailView):
     model = Product
@@ -107,7 +145,78 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+          #obtengo la cantidad de productos en el carrito del usuario
+          user=self.request.user
+          customer,create=Customer.objects.get_or_create(user=user,name=user.username)
+          cart,create = Cart.objects.get_or_create(user=customer)
+          canCarrito=CartItem.objects.filter(cart=cart).count()
+          context['can_carrito']=canCarrito
+
+        context=super().get_context_data(**kwargs)
         context['title']=context['object'].name
-        context['cart_url'] = reverse_lazy('cart')
-        context['store_url'] = reverse_lazy('store')
         return context
+    
+#vista para comprar
+def checkout(request):
+    context = {}
+    return render(request, 'store/checkout.html', context)
+
+#funcion borrar o mermar valor del carrito
+def cantiCarrito(request,pk):
+  #obtengo el producto
+  producto=get_object_or_404(Product,id=pk)
+  #obtengo el customer del usuario
+  customer=Customer.objects.get(user=request.user)
+  #obtengo el carrito del customer
+  cart=Cart.objects.get(user=customer)
+  #obtengo el cartitem del customer y el producto
+  cartItem=CartItem.objects.get(cart=cart,product=producto)
+  cartItem.delete()
+  #actualizo el carrito en su fecha de actualización
+  now=timezone.now()
+  cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+  cart.save()
+  return redirect('cart')
+
+def aumentarCantidad(request,pk):
+  #obtengo el producto
+  producto=get_object_or_404(Product,id=pk)
+  #obtengo el customer del usuario
+  customer=Customer.objects.get(user=request.user)
+  #obtengo el carrito del customer
+  cart=Cart.objects.get(user=customer)
+  #obtengo el cartitem del customer y el producto
+  cartItem=CartItem.objects.get(cart=cart,product=producto)
+
+  #aumento la cantidad
+  cartItem.cantidad+=1
+  #actualizo el total
+  cartItem.total=cartItem.product.price*cartItem.cantidad
+  cartItem.save()
+  #actualizo el carrito en su fecha de actualización
+  now=timezone.now()
+  cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+  cart.save()
+  return redirect('cart')
+
+def disminurCantidad(request,pk):
+  #obtengo el producto
+  producto=get_object_or_404(Product,id=pk)
+  #obtengo el customer del usuario
+  customer=Customer.objects.get(user=request.user)
+  #obtengo el carrito del customer
+  cart=Cart.objects.get(user=customer)
+  #obtengo el cartitem del customer y el producto
+  cartItem=CartItem.objects.get(cart=cart,product=producto)
+  if not cartItem.cantidad==1:
+    #aumento la cantidad
+    cartItem.cantidad-=1
+    #actualizo el total
+    cartItem.total=cartItem.product.price*cartItem.cantidad
+    cartItem.save()
+    #actualizo el carrito en su fecha de actualización
+    now=timezone.now()
+    cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+    cart.save()
+  return redirect('cart')
