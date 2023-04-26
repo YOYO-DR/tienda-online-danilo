@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView, FormView,DeleteView
 from django.contrib.auth.views import LoginView, LogoutView
 from .form import UserRegisterForm
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 import json #para manejar el body del json
 from django.utils import timezone
@@ -162,15 +163,14 @@ def checkout(request):
     return render(request, 'store/checkout.html', context)
 
 #funcion borrar valor del carrito
+@login_required
 def cantiCarrito(request,pk):
-  #obtengo el producto
-  producto=get_object_or_404(Product,id=pk)
   #obtengo el customer del usuario
   customer=Customer.objects.get(user=request.user)
   #obtengo el carrito del customer
   cart=Cart.objects.get(user=customer)
   #obtengo el cartitem del customer y el producto
-  cartItem=CartItem.objects.get(cart=cart,product=producto)
+  cartItem=get_object_or_404(CartItem,id=pk,cart=cart)
   cartItem.delete()
   #actualizo el carrito en su fecha de actualización
   now=timezone.now()
@@ -179,17 +179,14 @@ def cantiCarrito(request,pk):
   return redirect('cart')
 
 #funcion para restar cantidad del cartitem
+@login_required
 def aumentarCantidad(request,pk):
-  print(request.user.is_authenticated)
-  #obtengo el producto
-  producto=get_object_or_404(Product,id=pk)
   #obtengo el customer del usuario
   customer=Customer.objects.get(user=request.user)
   #obtengo el carrito del customer
   cart=Cart.objects.get(user=customer)
-  #obtengo el cartitem del customer y el producto
-  cartItem=CartItem.objects.get(cart=cart,product=producto)
-
+  #obtengo el cartitem del customer
+  cartItem=get_object_or_404(CartItem,id=pk,cart=cart)
   #aumento la cantidad
   cartItem.cantidad+=1
   #actualizo el total
@@ -202,15 +199,14 @@ def aumentarCantidad(request,pk):
   return redirect('cart')
 
 #funcion para aumentar cantidad del cartitem
+@login_required
 def disminurCantidad(request,pk):
-  #obtengo el producto
-  producto=get_object_or_404(Product,id=pk)
   #obtengo el customer del usuario
   customer=Customer.objects.get(user=request.user)
   #obtengo el carrito del customer
   cart=Cart.objects.get(user=customer)
-  #obtengo el cartitem del customer y el producto
-  cartItem=CartItem.objects.get(cart=cart,product=producto)
+  #obtengo el cartitem del customer
+  cartItem=get_object_or_404(CartItem,id=pk,cart=cart)
   if not cartItem.cantidad<2:
     #aumento la cantidad
     cartItem.cantidad-=1

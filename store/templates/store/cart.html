@@ -25,11 +25,11 @@
       </p></td>
       <td><p class="quantity">{{p.cantidad}}</p>
       <div class="quantity flex-column" style="display:inline-flex !important">
-        <a href="{% url 'aumentar_item' p.product.id %}"
+        <a href="{% url 'aumentar_item' p.id %}"
           ><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"
         /></a>
         {% if p.cantidad != 1 %}
-        <a href="{% url 'disminuir_item' p.product.id %}">
+        <a href="{% url 'disminuir_item' p.id %}">
           <img
             class="chg-quantity"
             src="{% static 'images/arrow-down.png' %}"
@@ -38,7 +38,7 @@
         {% endif %}
       </div></td>
       <td><p><span class="text-success">$</span> {{p.total}}</p></td>
-      <td><a class="btn btn-danger" href="{% url 'delete_item_cart' p.product.id %}"
+      <td><a class="btn btn-danger" href="{% url 'delete_item_cart' p.id %}"
         >Eliminar</a
       ></td>
     </tr>
