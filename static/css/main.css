@@ -1,3 +1,6 @@
+html {
+  height: 90vh;
+}
 body {
   background-color: hsl(0, 0%, 98%);
 }

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"
     />
+    {% block head %}{% endblock head %}
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -15,7 +16,7 @@
     />
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
     <title>{{title}}</title>
-    <link rel="icon" href="{% static 'images/tienda.png' %}">
+    <link rel="icon" href="{% static 'images/tienda.png' %}" />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -33,19 +34,9 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'store' %}"
-              >Store <span class="sr-only">(current)</span></a
-            >
-          </li>
-        </ul>
-        {% if request.resolver_match.url_name == "store" %} 
-        <form
-          class="form-inline my-2 my-lg-0"
-          action="."
-          method="GET"
-         >
+        {% comment %} Solo pondra el buscar en la pagina de store {% endcomment %}
+        {% if request.resolver_match.url_name == "store" %}
+        <form class="form-inline my-2 my-lg-0 ml-auto" action="." method="GET">
           <input
             class="form-control mr-sm-2"
             type="search"
@@ -57,28 +48,43 @@
             buscar
           </button>
         </form>
-        {% else %}
+        {% endif %}
 
-          {% endif %}
-        
-        <div class="form-inline my-2 my-lg-0">
+        <div class="form-inline my-2 my-lg-0 
+        {% comment %} Le pone la clase ml-auto si no esta en store para mover al borde {% endcomment %}
+        {% if request.resolver_match.url_name != "store" %}
+        ml-auto
+        {% endif %}
+        ">
+        {% comment %} Si el usuario esta logueado, solo le muestro el cerrar, de lo contrario, iniciar sesión y registro {% endcomment %}
           {% if user.is_authenticated %}
           <a href="{% url 'cerrar' %}" class="btn btn-danger mr-1">Cerrar</a>
           {% else %}
-          <a href="{% url 'login' %}" class="btn btn-success mr-1">Login</a>
+
+          <a href="{% url 'login' %}" class="btn btn-success mr-1"
+            >Iniciar sesión</a
+          >
+
           <a href="{% url 'register' %}" class="btn btn-warning">Registro</a>
-          {% endif %}
+
+          {% endif %} 
+          {% comment %} Si la pagina es diferente al login y al registro, le muestro el boton del carrito, de lo contrario, no {% endcomment %}
+          {% if request.resolver_match.url_name != "login" and request.resolver_match.url_name != "register" %}
           <a href="{% url 'cart' %}">
             <img id="cart-icon" src="{% static 'images/cart.png' %}" />
           </a>
+
+          {% endif %} 
           {% if user.is_authenticated %} 
-          {% if request.resolver_match.url_name == "cart" %} {% else %}
+          {% comment %} Si el usuario no esta en la pagina de cart, le muestro la cantidad en el carrito {% endcomment %}
+          {% if request.resolver_match.url_name != "cart" %} 
           <p id="cart-total">{{can_carrito}}</p>
-          {% endif %} {% endif %}
+          {% endif %}
+          {% endif %}
         </div>
       </div>
     </nav>
-    
+
     <div class="container">
       <br />
       {% block content %} {% endblock content %}

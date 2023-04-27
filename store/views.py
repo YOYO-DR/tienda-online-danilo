@@ -133,6 +133,11 @@ class CartView(ListView):
   def get_context_data(self, **kwargs):
       context=super().get_context_data(**kwargs)
       canCarrito=self.get_queryset().count()
+      cartItems=self.get_queryset()
+      sumaCarrito=0
+      for prod in cartItems:
+         sumaCarrito+=prod.cantidad * prod.product.price
+      context['checkoutValor']=sumaCarrito
       if canCarrito==0:
         context['title']='Carrito'
       else:
@@ -170,13 +175,18 @@ def cantiCarrito(request,pk):
   #obtengo el carrito del customer
   cart=Cart.objects.get(user=customer)
   #obtengo el cartitem del customer y el producto
-  cartItem=get_object_or_404(CartItem,id=pk,cart=cart)
-  cartItem.delete()
-  #actualizo el carrito en su fecha de actualización
-  now=timezone.now()
-  cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
-  cart.save()
-  return redirect('cart')
+  cartItem=CartItem.objects.filter(id=pk,cart=cart)
+  if not cartItem.exists():
+     return redirect('cart')
+  else:
+    #obtengo el carrito
+    cartItem=cartItem.first()
+    cartItem.delete()
+    #actualizo el carrito en su fecha de actualización
+    now=timezone.now()
+    cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+    cart.save()
+    return redirect('cart')
 
 #funcion para restar cantidad del cartitem
 @login_required
@@ -186,17 +196,23 @@ def aumentarCantidad(request,pk):
   #obtengo el carrito del customer
   cart=Cart.objects.get(user=customer)
   #obtengo el cartitem del customer
-  cartItem=get_object_or_404(CartItem,id=pk,cart=cart)
-  #aumento la cantidad
-  cartItem.cantidad+=1
-  #actualizo el total
-  cartItem.total=cartItem.product.price*cartItem.cantidad
-  cartItem.save()
-  #actualizo el carrito en su fecha de actualización
-  now=timezone.now()
-  cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
-  cart.save()
-  return redirect('cart')
+  cartItem=CartItem.objects.filter(id=pk,cart=cart)
+  #pregunto si existe para verificar que no entre por la url
+  if not cartItem.exists():
+     return redirect('cart')
+  else:
+    #obtengo el carrito
+    cartItem=cartItem.first()
+    #aumento la cantidad
+    cartItem.cantidad+=1
+    #actualizo el total
+    cartItem.total=cartItem.product.price*cartItem.cantidad
+    cartItem.save()
+    #actualizo el carrito en su fecha de actualización
+    now=timezone.now()
+    cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+    cart.save()
+    return redirect('cart')
 
 #funcion para aumentar cantidad del cartitem
 @login_required
@@ -206,15 +222,19 @@ def disminurCantidad(request,pk):
   #obtengo el carrito del customer
   cart=Cart.objects.get(user=customer)
   #obtengo el cartitem del customer
-  cartItem=get_object_or_404(CartItem,id=pk,cart=cart)
-  if not cartItem.cantidad<2:
-    #aumento la cantidad
-    cartItem.cantidad-=1
-    #actualizo el total
-    cartItem.total=cartItem.product.price*cartItem.cantidad
-    cartItem.save()
-    #actualizo el carrito en su fecha de actualización
-    now=timezone.now()
-    cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
-    cart.save()
-  return redirect('cart')
+  cartItem=CartItem.objects.filter(id=pk,cart=cart)
+  if not cartItem.exists():
+     return redirect('cart')
+  else:
+    cartItem=cartItem.first()
+    if not cartItem.cantidad<2:
+      #aumento la cantidad
+      cartItem.cantidad-=1
+      #actualizo el total
+      cartItem.total=cartItem.product.price*cartItem.cantidad
+      cartItem.save()
+      #actualizo el carrito en su fecha de actualización
+      now=timezone.now()
+      cart.updated=now.strftime("%Y-%m-%d %H:%M:%S")
+      cart.save()
+    return redirect('cart')
