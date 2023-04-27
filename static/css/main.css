@@ -61,10 +61,6 @@ h6 {
   margin-top: 10px;
 }
 
-.btn {
-  border-radius: 0;
-}
-
 .row-image {
   width: 100px;
 }
@@ -103,3 +99,4 @@ h6 {
 .hidden {
   display: none !important;
 }
+
