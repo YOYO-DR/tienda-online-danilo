@@ -1,6 +1,6 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %} 
 {% if object_list %}
-<div class=" container shadow">
+<div class=" container shadow p-2">
   <h1>Checkout</h1>
   <h2>Total <span class="text-success">$</span> {{checkoutValor}}</h2>
 </div>
@@ -22,12 +22,12 @@
       <td><a href="{% url 'detalle_product' p.product.id %}">
         <img class="row-image" src="{{p.product.photo.url}}" />
       </a></td>
-      <td><p>{{p.product.name|title}}</p></td>
-      <td><p>
+      <td><span>{{p.product.name|title}}</span></td>
+      <td><span>
         <span class="text-success">$</span>
         <span id="can-uni">{{p.product.price}}</span>
-      </p></td>
-      <td><p class="quantity">{{p.cantidad}}</p>
+      </span></td>
+      <td><span class="quantity">{{p.cantidad}}</span>
       <div class="quantity flex-column" style="display:inline-flex !important">
         <a href="{% url 'aumentar_item' p.id %}"
           ><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"
@@ -41,7 +41,7 @@
         </a>
         {% endif %}
       </div></td>
-      <td><p><span class="text-success">$</span> {{p.total}}</p></td>
+      <td><span><span class="text-success">$</span> {{p.total}}</span></td>
       <td><a class="btn btn-danger" href="{% url 'delete_item_cart' p.id %}"
         >Eliminar</a
       ></td>
