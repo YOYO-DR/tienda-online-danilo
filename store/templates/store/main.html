@@ -11,6 +11,7 @@
     rel="stylesheet"
     href="{% static 'libs/bootstrap/css/bootstrap.min.css' %}"
     />
+    <link rel="stylesheet" href="{% static 'libs/sweetalert/css/sweetalert2.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
     <title>{{title}}</title>
     <link rel="icon" href="{% static 'images/tienda.png' %}" />
@@ -23,6 +24,7 @@
       {% block content %} {% endblock content %}
     </div>
 
+    {% comment %} Scripts {% endcomment %}
     <script
       src="{% static 'libs/bootstrap/js/popper.min.js' %}"
     ></script>
@@ -31,6 +33,43 @@
       src="{% static 'libs/bootstrap/js/bootstrap.min.js' %}"
       
     ></script>
+    <script src="{% static 'libs/sweetalert/js/sweetalert2.all.min.js' %}"></script>
+
     {% block js %}{% endblock js %}
+    <script>
+  {% if form.errors %} 
+    errors='<ul style="list-style-type: none;">'
+    {% for field in form %}
+      {% for error in field.errors %}
+        errors+="<li>{{ error }}</li>"
+      {% endfor %} 
+    {% endfor %}
+    {% comment %} 
+      Errores que no son de los campos 
+    {% endcomment %} 
+    {% for error in form.non_field_errors %}
+      errors+="<li>{{ error }}</li>"
+    {% endfor %}
+    errors+='</ul>'
+    Swal.fire({
+      title:'!Error¡',
+      //text:errors es para texto normal
+      html:errors,
+      icon:'error'
+    })
+  {% endif %}
+  //mostrar y ocultar contraseña
+const passwordInput = document.getElementById("id_password1");
+const showPasswordCheckbox = document.getElementById("showPassword");
+
+showPasswordCheckbox.addEventListener("change", function() {
+  if (showPasswordCheckbox.checked) {
+    passwordInput.type = "text";
+  } else {
+    passwordInput.type = "password";
+  }
+});
+
+</script>
   </body>
 </html>

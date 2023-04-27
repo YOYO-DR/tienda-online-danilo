@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Un conjunto de filtros de plantilla de Django útiles para agregar un "toque humano" a los datos.
+    # https://docs.djangoproject.com/en/4.2/ref/contrib/humanize/
+    'django.contrib.humanize',
     'widget_tweaks',
     'store'
 ]

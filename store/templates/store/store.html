@@ -1,4 +1,7 @@
-{% extends 'store/main.html' %} {% load static %} {% block content %} 
+{% extends 'store/main.html' %} 
+{% load static %} 
+{% load humanize %}
+{% block content %} 
 {% if user.is_authenticated %}
 <h1>Bienvenido {{user.username|title}}</h1>
 {% endif %}
@@ -22,7 +25,7 @@
       
       <a class="btn btn-outline-success" href="{% url 'detalle_product' product.id %}">Ver</a>
       <h5 style="display: inline-block; float: right">
-        <strong>${{product.price}}</strong>
+        <strong>${{product.price|intcomma}}</strong>
       </h5>
     </div>
   </div>

@@ -65,7 +65,7 @@ class StoreView(ListView):
           canCarrito=CartItem.objects.filter(cart=cart).count()
           context['can_carrito']=canCarrito
         
-        context['title'] = 'Store'
+        context['title'] = 'Tienda'
         context['cart_url'] = reverse_lazy('cart')
         if not context['object_list']:
             busqueda = self.request.GET.get('busqueda')
