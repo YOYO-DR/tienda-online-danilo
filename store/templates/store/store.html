@@ -29,9 +29,21 @@
       </h5>
     </div>
   </div>
-  {% empty %}
-  <h3>{{mensaje_busqueda}}</h3>
   {% endfor %}
 </div>
 {% endblock content %} 
 
+{% block js %}
+{% if not object_list %}
+<script>
+  Swal.fire({
+  title: 'No se encontró el producto',
+  icon: 'question'
+}).then((result) => { //con then recibo el resultado de lo que ponga el usuario, en este caso solo confirma pq solo esta ese boton
+  if (result.isConfirmed) { //si lo confirma, lo redirecciono a la url store
+    window.location.href = "{% url 'store' %}";
+  }
+});
+  </script>
+{% endif %}
+{% endblock js %}
