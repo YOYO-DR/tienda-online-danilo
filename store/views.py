@@ -6,13 +6,12 @@ from django.contrib.auth.views import LoginView, LogoutView
 from .form import UserRegisterForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth import login, logout, authenticate
 import json  # para manejar el body del json
 from django.utils import timezone
 
 # vista de los articulos
-
-
 class StoreView(ListView):
     model = Product
     template_name = 'store/store.html'
@@ -79,13 +78,12 @@ class StoreView(ListView):
         return context
 
 # registro
-
-
 class RegisterForm(FormView):
     form_class = UserRegisterForm
     template_name = 'store/register.html'
     success_url = reverse_lazy('store')
 
+    
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:  # si esta logueado lo mando a la vista principal
             return redirect('store')
@@ -106,8 +104,6 @@ class RegisterForm(FormView):
         return context
 
 # login
-
-
 class IngresarView(LoginView):
     template_name = 'store/login.html'
 
@@ -124,15 +120,12 @@ class IngresarView(LoginView):
         return context
 
 # carrito
-
-
 class CartView(ListView):
     model = Cart
     template_name = 'store/cart.html'
 
+    @method_decorator(login_required) #para que agregue el next en la dirección y con el input invisible lo recibe la vista del login y lo redirecciona al cart cuando inicie sesión correctamente
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -158,8 +151,6 @@ class CartView(ListView):
         return context
 
 # vista detail de los productos
-
-
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'store/product_detail.html'
@@ -186,9 +177,7 @@ def checkout(request):
     return render(request, 'store/checkout.html', context)
 
 # funcion borrar valor del carrito
-
-
-@login_required
+@method_decorator(login_required)
 def cantiCarrito(request, pk):
     # obtengo el customer del usuario
     customer = Customer.objects.get(user=request.user)
@@ -209,9 +198,7 @@ def cantiCarrito(request, pk):
         return redirect('cart')
 
 # funcion para restar cantidad del cartitem
-
-
-@login_required
+@method_decorator(login_required)
 def aumentarCantidad(request, pk):
     # obtengo el customer del usuario
     customer = Customer.objects.get(user=request.user)
@@ -237,9 +224,7 @@ def aumentarCantidad(request, pk):
         return redirect('cart')
 
 # funcion para aumentar cantidad del cartitem
-
-
-@login_required
+@method_decorator(login_required)
 def disminurCantidad(request, pk):
     # obtengo el customer del usuario
     customer = Customer.objects.get(user=request.user)
