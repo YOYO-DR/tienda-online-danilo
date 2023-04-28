@@ -119,8 +119,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-co'
 
-#TIME_ZONE = 'UTC'
-#para que ponga mi hora
+# TIME_ZONE = 'UTC'
+# para que ponga mi hora
 TIME_ZONE = 'America/Bogota'
 USE_I18N = True
 
@@ -143,4 +143,5 @@ MEDIA_URL = 'public/'
 LOGIN_REDIRECT_URL = 'store'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'store'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

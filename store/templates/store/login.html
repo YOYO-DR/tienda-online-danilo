@@ -19,6 +19,7 @@
     <div class="d-flex justify-content-center form_container">
       <form method="POST" action="">
         {% csrf_token %} 
+        <input type="hidden" name="next" value="{{next}}">
         {% for field in form %}
         <div class="input-group mb-3">
           <div class="input-group-append">
