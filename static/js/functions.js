@@ -28,25 +28,36 @@ function carritoAcciones(itemId,url,accion) {
         pk: itemId,
         action: accion,
       });
-  enviar_datos(url, datos, function (data) { //funcion si la petición se hace correctamente
-    if (data["mensaje"]) {//si existe la clave mensaje
-      Swal.fire({
+  enviar_datos(url, datos, function (data) {//funcion si la petición se hace correctamente
+    if (data['error']) {
+  Swal.fire({
+    position: "top-end",
+    icon: "error",
+    title: `${data["error"]}`,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+    } else {
+      if (accion == "add_cart") {
+        //si existe la clave mensaje
+        /*Swal.fire({
         position: "top-end",
         icon: "success",
         title: `${data["mensaje"]}`,
         showConfirmButton: false,
         timer: 1500,
-      }).then((result) => {//despues del modal
+      }).then((result) => {*/ //despues del modal
         const pTotal = document.getElementById("cart-total"); //obtengo el p del carrito
-        pTotal.innerHTML = `${data['can_carrito']}`; //le pongo la cantidad
-      });
+        pTotal.innerHTML = `${data["can_carrito"]}`; //le pongo la cantidad
+        //});
 
-      //si es alguna de las 3 acciones del carrito lo pongo aqui 
-      if (accion == "eliminar") {
+        //si es alguna de las 3 acciones del carrito lo pongo aqui
+      } else if (accion == "eliminar") {
         var trElim = document.getElementById("item-" + itemId); //obtengo el tr del item y lo quito si la petición de eliminar es correcta
         trElim.remove();
-      } else if (accion == "aumentar" || accion == "disminuir") { //si es aumentar o disminuir, modifico el mensaje del modal
-        if (accion == "aumentar") {
+      } else if (accion == "aumentar" || accion == "disminuir") {
+        //si es aumentar o disminuir, modifico el mensaje del modal
+        /*if (accion == "aumentar") {
           msj = "Se aumento ";
         } else if (accion == "disminuir") {
           msj = "Se disminuyó ";
@@ -57,29 +68,29 @@ function carritoAcciones(itemId,url,accion) {
           title: msj+data['mensaje'],
           showConfirmButton: false,
           timer: 1000,
-        }).then((result) => {
-            const cantidad = document.getElementById(`product/${itemId}`); //donde va la cantidad
-            const total = document.getElementById(`total_product/${itemId}`); //donde va el total
-            cantidad.innerHTML = `${data['can_cantidad']}`
-          total.innerHTML = `${data["can_total"].toFixed(2)}`;
-        });
-      };
-      //independientemente de la accion, eliminar, aumentar o disminuir, se modifica el total del checkout
-      const checkputTotal = document.getElementById(`checkout_total`);
-      checkputTotal.innerHTML = `${data["check_total"].toFixed(1)}`;
-      if (data['check_total'] == 0) { //si el el total del carrito es 0, remplazo todo el contenido y pongo un mensaje
-        const contenedorABorrar = document.getElementById("contenedor_todo");
-        contenedorABorrar.innerHTML = "<h2>No hay productos en el carrito</h2>";
+        }).then((result) => {*/
+        const cantidad = document.getElementById(`product/${itemId}`); //donde va la cantidad
+        const total = document.getElementById(`total_product/${itemId}`); //donde va el total
+        cantidad.innerHTML = `${data["can_cantidad"]}`;
+        total.innerHTML = `${data["can_total"].toFixed(2)}`;
+        //});
       }
-    } else {
-      Swal.fire({
-        position: "top-end",
-        icon: "error",
-        title: `${data["error"]}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
+      if (accion == "aumentar" || accion == "disminuir" || accion == "eliminar") {
+        //independientemente de la accion, eliminar, aumentar o disminuir, se modifica el total del checkout
+        const checkputTotal = document.getElementById(`checkout_total`);
+        checkputTotal.innerHTML = `${data["check_total"].toFixed(1)}`;
+        if (data["check_total"] == 0) {
+          //si el el total del carrito es 0, remplazo todo el contenido y pongo un mensaje
+          const contenedorABorrar = document.getElementById("contenedor_todo");
+          contenedorABorrar.innerHTML =
+            "<h2>No hay productos en el carrito</h2>";
+        }
+      }
+      
+}
+    
+    
+     
   });
     };
  

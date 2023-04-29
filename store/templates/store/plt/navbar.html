@@ -26,31 +26,34 @@
           />
           <button class="btn btn-primary" type="submit">Buscar</button>
         </form>
-        {% endif %}
-
-        {% if user.is_authenticated %}
+        {% endif %} {% if user.is_authenticated %}
         <li class="nav-item">
-          <a href="{% url 'cerrar' %}" class="btn btn-danger text-white">Cerrar</a>
+          <a href="{% url 'cerrar' %}" class="btn btn-danger text-white"
+            >Cerrar</a
+          >
         </li>
         {% else %}
         <li class="nav-item">
-          <a href="{% url 'login' %}" class="btn btn-success text-white me-1 ms-1 mb-2">Iniciar sesión</a>
+          <a
+            href="{% url 'login' %}"
+            class="btn btn-success text-white me-1 ms-1 mb-2"
+            >Iniciar sesión</a
+          >
         </li>
         <li class="nav-item">
-          <a href="{% url 'register' %}" class="btn btn-warning text-white">Registro</a>
+          <a href="{% url 'register' %}" class="btn btn-warning text-white"
+            >Registro</a
+          >
         </li>
-        {% endif %}
-        {% if request.resolver_match.url_name != "login" and request.resolver_match.url_name != "register" %}
-          <a href="{% url 'cart' %}">
-            <img id="cart-icon" src="{% static 'images/cart.png' %}" />
-          </a>
-          {% endif %} 
-          {% if user.is_authenticated %} 
-          {% comment %} Si el usuario no esta en la pagina de cart, le muestro la cantidad en el carrito {% endcomment %}
-          {% if request.resolver_match.url_name != "cart" %} 
-          <p id="cart-total">{{can_carrito}}</p>
-          {% endif %}
-          {% endif %}
+        {% endif %} {% if request.resolver_match.url_name != "login" and request.resolver_match.url_name != "register" %}
+        <a href="{% url 'cart' %}">
+          <img id="cart-icon" src="{% static 'images/cart.png' %}" />
+        </a>
+        {% endif %} {% if user.is_authenticated %} {% comment %} Si el usuario
+        no esta en la pagina de cart, le muestro la cantidad en el carrito {% endcomment %} 
+        {% if request.resolver_match.url_name != "cart" %}
+        <p id="cart-total">{{can_carrito}}</p>
+        {% endif %} {% endif %}
       </ul>
     </div>
   </div>
