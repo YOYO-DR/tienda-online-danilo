@@ -192,13 +192,12 @@ class CarritoAcciones(View):
       if not cartItem.exists():
           return HttpResponse('No redirecciona')
           return redirect('cart')
+      #continuar
       else:
         # obtengo el carrito
         cartItem = cartItem.first()
         print(cartItem)
         return JsonResponse({'mensaje':f'Exitoso: {cartItem.product.name}'})
-
-      return HttpResponse('Hola')
     
 
 # funcion borrar valor del carrito
