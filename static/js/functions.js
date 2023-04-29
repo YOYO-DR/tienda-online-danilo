@@ -65,7 +65,10 @@ function carritoAcciones(itemId,url,accion, user_id, csrftoken) {
       };
       const checkputTotal = document.getElementById(`checkout_total`);
       checkputTotal.innerHTML = `${data["check_total"].toFixed(1)}`;
-      
+      if (data['check_total'] == 0) {
+        const contenedorABorrar = document.getElementById("contenedor_todo");
+        contenedorABorrar.innerHTML = "<h2>No hay productos en el carrito</h2>";
+      }
     } else {
       Swal.fire({
         position: "top-end",
