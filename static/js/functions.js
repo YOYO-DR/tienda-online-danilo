@@ -36,6 +36,9 @@ function carritoAcciones(itemId,url,accion, user_id, csrftoken) {
         title: `${data["mensaje"]}`,
         showConfirmButton: false,
         timer: 1500,
+      }).then((result) => {
+        const pTotal = document.getElementById("cart-total"); //poner el total en el carrito
+        pTotal.innerHTML = `${data['can_carrito']}`;
       });
       //si es alguna de las 3 acciones del carrito lo pongo aqui 
       if (accion == "eliminar") {
@@ -54,9 +57,15 @@ function carritoAcciones(itemId,url,accion, user_id, csrftoken) {
           showConfirmButton: false,
           timer: 1000,
         }).then((result) => {
-          location.href = "/cart/"; //lo redirecciono por ahora a la misma vista hasta saber como cambiar los valores
+            const cantidad = document.getElementById(`product/${itemId}`); //donde va la cantidad
+            const total = document.getElementById(`total_product/${itemId}`); //donde va el total
+            cantidad.innerHTML = `${data['can_cantidad']}`
+          total.innerHTML = `${data["can_total"].toFixed(2)}`;
         });
-      }
+      };
+      const checkputTotal = document.getElementById(`checkout_total`);
+      checkputTotal.innerHTML = `${data["check_total"].toFixed(1)}`;
+      
     } else {
       Swal.fire({
         position: "top-end",
