@@ -58,5 +58,17 @@
   form_fields[2].placeholder = "Correo";
   form_fields[3].placeholder = "Ingresa contraseña";
   form_fields[4].placeholder = "Confirma contraseña";
+  
+  //mostrar y ocultar contraseña
+  const passwordInput = document.getElementById("id_password1");
+  const showPasswordCheckbox = document.getElementById("showPassword");
+  
+  showPasswordCheckbox.addEventListener("change", function() {
+    if (showPasswordCheckbox.checked) {
+      passwordInput.type = "text";
+    } else {
+      passwordInput.type = "password";
+    }
+  });
 </script>
 {% endblock js %}

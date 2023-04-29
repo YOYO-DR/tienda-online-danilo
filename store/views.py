@@ -146,10 +146,7 @@ class CartView(ListView):
         for prod in cartItems:
             sumaCarrito += prod.cantidad * prod.product.price
         context['checkoutValor'] = sumaCarrito
-        if canCarrito == 0:
-            context['title'] = 'Carrito'
-        else:
-            context['title'] = f'Carrito {canCarrito}'
+        context['title'] = 'Carrito'
         return context
 
 # vista detail de los productos
@@ -190,87 +187,39 @@ class CarritoAcciones(View):
       # obtengo el cartitem del customer y el producto
       cartItem = CartItem.objects.filter(id=pk, cart=cart)
       if not cartItem.exists():
-          return HttpResponse('No redirecciona')
           return redirect('cart')
       #continuar
       else:
         # obtengo el carrito
         cartItem = cartItem.first()
-        print(cartItem)
-        return JsonResponse({'mensaje':f'Exitoso: {cartItem.product.name}'})
-    
-
-# funcion borrar valor del carrito
-@method_decorator(login_required)
-def cantiCarrito(request, pk):
-    # obtengo el customer del usuario
-    customer = Customer.objects.get(user=request.user)
-    # obtengo el carrito del customer
-    cart = Cart.objects.get(user=customer)
-    # obtengo el cartitem del customer y el producto
-    cartItem = CartItem.objects.filter(id=pk, cart=cart)
-    if not cartItem.exists():
-        return redirect('cart')
-    else:
-        # obtengo el carrito
-        cartItem = cartItem.first()
-        cartItem.delete()
-        # actualizo el carrito en su fecha de actualización
-        now = timezone.now()
-        cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
-        cart.save()
-        return redirect('cart')
-
-# funcion para restar cantidad del cartitem
-@method_decorator(login_required)
-def aumentarCantidad(request, pk):
-    # obtengo el customer del usuario
-    customer = Customer.objects.get(user=request.user)
-    # obtengo el carrito del customer
-    cart = Cart.objects.get(user=customer)
-    # obtengo el cartitem del customer
-    cartItem = CartItem.objects.filter(id=pk, cart=cart)
-    # pregunto si existe para verificar que no entre por la url
-    if not cartItem.exists():
-        return redirect('cart')
-    else:
-        # obtengo el carrito
-        cartItem = cartItem.first()
-        # aumento la cantidad
-        cartItem.cantidad += 1
-        # actualizo el total
-        cartItem.total = cartItem.product.price*cartItem.cantidad
-        cartItem.save()
-        # actualizo el carrito en su fecha de actualización
-        now = timezone.now()
-        cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
-        cart.save()
-        return redirect('cart')
-
-# funcion para aumentar cantidad del cartitem
-@method_decorator(login_required)
-def disminurCantidad(request, pk):
-    # obtengo el customer del usuario
-    customer = Customer.objects.get(user=request.user)
-    # obtengo el carrito del customer
-    cart = Cart.objects.get(user=customer)
-    # obtengo el cartitem del customer
-    cartItem = CartItem.objects.filter(id=pk, cart=cart)
-    if not cartItem.exists():
-        return redirect('cart')
-    else:
-        cartItem = cartItem.first()
-        if not cartItem.cantidad < 2:
+        # pregunto la acción
+        action=data['action']
+        if action=='eliminar':
+          #elimino el item
+          cartItem.delete()
+        elif action=='aumentar':
+          # aumento la cantidad
+          cartItem.cantidad += 1
+          # actualizo el total
+          cartItem.total = cartItem.product.price*cartItem.cantidad
+          cartItem.save()
+        elif action=='disminuir':
+          if not cartItem.cantidad < 2:
             # aumento la cantidad
             cartItem.cantidad -= 1
             # actualizo el total
             cartItem.total = cartItem.product.price*cartItem.cantidad
             cartItem.save()
-            # actualizo el carrito en su fecha de actualización
-            now = timezone.now()
-            cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
-            cart.save()
-        return redirect('cart')
+          else:
+            return JsonResponse({'error':'No se puede restar más de un item'})
+        else:
+          return JsonResponse({'error':'Opción no valida'})
+          
+        # actualizo el carrito en su fecha de actualización
+        now = timezone.now()
+        cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
+        cart.save()
+        return JsonResponse({'mensaje':f'{cartItem.product.name} eliminado'})
 
 # vista para comprar
 def checkout(request):

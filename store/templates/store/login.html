@@ -61,3 +61,18 @@
   </div>
 </div>
 {% endblock content %}
+{% block js %}
+<script>
+  //mostrar y ocultar contraseña
+  const passwordInput = document.getElementById("id_password1");
+  const showPasswordCheckbox = document.getElementById("showPassword");
+  
+  showPasswordCheckbox.addEventListener("change", function() {
+    if (showPasswordCheckbox.checked) {
+      passwordInput.type = "text";
+    } else {
+      passwordInput.type = "password";
+    }
+  });
+</script>
+{% endblock js %}

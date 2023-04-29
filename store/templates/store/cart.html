@@ -16,9 +16,9 @@
         <th scope="col">Opciones</th>
       </tr>
     </thead>
-    {% for p in object_list %}
     <tbody>
-      <tr>
+      {% for p in object_list %}
+      <tr id="item-{{p.id}}">
         <td>
           <a href="{% url 'detalle_product' p.product.id %}">
             <img class="row-image" src="{{p.product.photo.url}}" />
@@ -37,13 +37,13 @@
             class="quantity flex-column"
             style="display: inline-flex !important"
           >
-            <a href="{% url 'aumentar_item' p.id %}"
+            <a id="{{p.id}}/aumentar" href="#" class="btnAccion"
               ><img
                 class="chg-quantity"
                 src="{% static 'images/arrow-up.png' %}"
             /></a>
             {% if p.cantidad != 1 %}
-            <a href="{% url 'disminuir_item' p.id %}">
+            <a id="{{p.id}}/disminuir" href="#" class="btnAccion">
               <img
                 class="chg-quantity"
                 src="{% static 'images/arrow-down.png' %}"
@@ -57,14 +57,15 @@
         </td>
         <td>
           <a
-            class="btn btn-danger btnEliminar"
-            href="{% url 'delete_item_cart' p.id %}"
+            class="btn btn-danger btnAccion"
+            id="{{p.id}}/eliminar"
+            href="#"
             >Eliminar</a
           >
         </td>
       </tr>
+      {% endfor %}
     </tbody>
-    {% endfor %}
   </table>
 </div>
 
@@ -72,31 +73,27 @@
 <h2>No hay productos en el carrito</h2>
 {% endif %} {% endblock content %} {% block js %}
 <script>
-  $(document).ready(function() {
-  $('.btnEliminar').on('click',function (e) {
-    e.preventDefault();
-    var url = $(this).attr('href');
-    var segments = url.split('/'); // Divide la URL en segmentos
-    var itemId = segments.slice(-2, -1)[0]; //Obtiene el penúltimo segmento
-    //console.log(`itemId: ${itemId} user_id: {{user.id}}`)
-    var datos = JSON.stringify({// Convierte los datos en JSON para poder procesarlos en la vista
-                pk:itemId,
-              user_id:{{user.id}}
-              })
+  
 
-             $.ajax({
-              url:'{% url 'acciones_carrito' %}',
-              type: 'POST',
-              data:datos,
-              dataType: 'json'
-              }).done(function (data) { //Este metodo se ejecuta si la peticion se realiza de manera exitosa
-              console.log(data);
-              }).fail(function (jqXHR,textStatus,errorThrown){ //Este se ejecuta si la peticion tiene algun error
-              alert(`${textStatus} : ${errorThrown}`)
-              }).always(function () { //este se ejecuta siempre
-              })
+$(document).ready(function () {
+  //obtengo todos los links con esa clase
+  $('.btnAccion').on("click", function (e) {
+    //obtengo el boton o boton de link y le agrego el evento
+      e.preventDefault(); //detengo el evento de irse a la url
+      const csrftoken = $('[name=csrfmiddlewaretoken]').val(); // obtener el token CSRF del input escondido de la pagina
+      var id=$(this).attr("id").split("/");//obtengo el id del boton y lo parto entre la accion y el id del item
+      var id_item = id[0] //cojo el id item que esta de primero
+      var action=id[1]  //cojo la accion que esta de segunda
+      // console.log(action)
+      //se ejecuta cuando se entra a la pagina
+      carritoAcciones(
+        id_item, //le paso el id del item
+        '{% url 'acciones_carrito' %}', //url a donde va la petición
+        action, //accion
+        '{{user.id}}', //id usuario
+        csrftoken)//token de seguridad
+  })
+  })
 
-          })
-        });
 </script>
 {% endblock js %}

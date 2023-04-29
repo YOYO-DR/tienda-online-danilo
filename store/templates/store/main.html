@@ -18,6 +18,7 @@
     {% block head %}{% endblock head %}
   </head>
   <body>
+    {% csrf_token %}
     {% include 'store/plt/navbar.html' %}
     <div class="container">
       <br />
@@ -38,7 +39,7 @@
       
     ></script>
     <script src="{% static 'libs/sweetalert/js/sweetalert2.all.min.js' %}"></script>
-
+<script src="{% static 'js/functions.js' %}"></script>
     <script>
   {% if form.errors %} 
     errors='<ul style="list-style-type: none;">'
@@ -61,18 +62,6 @@
       icon:'error'
     })
   {% endif %}
-  //mostrar y ocultar contraseña
-const passwordInput = document.getElementById("id_password1");
-const showPasswordCheckbox = document.getElementById("showPassword");
-
-showPasswordCheckbox.addEventListener("change", function() {
-  if (showPasswordCheckbox.checked) {
-    passwordInput.type = "text";
-  } else {
-    passwordInput.type = "password";
-  }
-});
-
 </script>
 {% block js %}{% endblock js %}
   </body>

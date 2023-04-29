@@ -12,9 +12,6 @@ urlpatterns = [
     #cerrar sesión
     path('cerrar/', LogoutView.as_view(), name="cerrar"),
     path('product/<int:pk>/',ProductDetailView.as_view(),name='detalle_product'),
-    path('delete/item/<int:pk>/',cantiCarrito, name="delete_item_cart"),
-    path('aumentar/item/<int:pk>/',aumentarCantidad, name="aumentar_item"),
-    path('disminuir/item/<int:pk>/',disminurCantidad, name="disminuir_item"),
     #acciones del carrito
     path('cart/acciones/',CarritoAcciones.as_view(), name="acciones_carrito")
 ]
