@@ -18,13 +18,23 @@ class StoreView(ListView):
     model = Product
     template_name = 'store/store.html'
 
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+
     def post(self, request, *args, **kwargs):
-        action = request.POST.get('action')
+        data=json.loads(request.body)
+        print(data)
         # miro si existe un action
+        action = data['action']
         if action == 'add_cart':
             # obtengo el producto
-            producto_id = request.POST['product']
-            producto = Product.objects.get(id=producto_id)
+            producto_id = data['pk']
+            try:
+              producto = Product.objects.get(id=producto_id)
+            except Exception as e:
+              return JsonResponse({'error':f'El producto no existe'})
             # obtengo el usuario para obtener su customer
             user = request.user
             # obtengo el customer o creo el customer y si lo creo, le paso el name a colocar
@@ -46,10 +56,7 @@ class StoreView(ListView):
             now = timezone.now()
             cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
             cart.save()
-        url_red = request.POST.get('url_red')
-        if url_red:
-            return redirect(url_red)
-        return redirect('store')
+        return JsonResponse({'mensaje':f'¡{producto.name} agregado al carrito!'})
 
     def get_queryset(self):
         busqueda = self.request.GET.get('busqueda')
@@ -170,10 +177,9 @@ class ProductDetailView(DetailView):
 
 #vista para borrar, restar y sumar al carrito
 class CarritoAcciones(View):
-    
-    @method_decorator(csrf_exempt)
-    #@method_decorator(login_required)
+
     def dispatch(self, request, *args, **kwargs):
+        
         return super().dispatch(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):

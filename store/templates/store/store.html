@@ -15,12 +15,7 @@
       </h4>
       <hr />
       {% if user.is_authenticated %}
-      <form method='post' style="display:inline;">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="add_cart">
-        <input type="hidden" name="product" value="{{product.id}}">
-        <input class="btn btn-outline-secondary" type="submit" value="Agregar Carrito">
-      </form>
+        <a id="{{product.id}}/add_cart" href="#" class="btn btn-outline-secondary btnAccion">Agregar Carrito</a>
       {% endif %}
       
       <a class="btn btn-outline-success" href="{% url 'detalle_product' product.id %}">Ver</a>
@@ -34,8 +29,8 @@
 {% endblock content %} 
 
 {% block js %}
-{% if not object_list %}
 <script>
+{% if not object_list %}
   Swal.fire({
   title: 'No se encontró el producto',
   icon: 'question'
@@ -44,6 +39,28 @@
     window.location.href = "{% url 'store' %}";
   }
 });
+{% else %}
+
+$(document).ready(function () {
+  //obtengo todos los links con esa clase
+  $('.btnAccion').on("click", function (e) {
+    //obtengo el boton o boton de link y le agrego el evento
+      e.preventDefault(); //detengo el evento de irse a la url
+      const csrftoken = $('[name=csrfmiddlewaretoken]').val(); // obtener el token CSRF del input escondido de la pagina
+      var id=$(this).attr("id").split("/");//obtengo el id del boton y lo parto entre la accion y el id del item
+      var id_item = id[0] //cojo el id del item que esta de primero
+      var action=id[1]  //cojo la accion que esta de segunda
+      // console.log(action)
+      //se ejecuta cuando se entra a la pagina
+      carritoAcciones(
+        id_item, //le paso el id del item
+        '{% url 'store' %}', //url a donde va la petición
+        action, //accion
+        '{{user.id}}', //id usuario
+        csrftoken)//token de seguridad
+  })
+  })
+  {% endif %}
   </script>
-{% endif %}
+
 {% endblock js %}
