@@ -26,6 +26,10 @@
 
     {% comment %} Scripts {% endcomment %}
     <script
+    src="{% static 'libs/jquery/js/jquery-3.6.4.min.js' %}"
+    >
+    </script>
+    <script
       src="{% static 'libs/bootstrap/js/popper.min.js' %}"
     ></script>
 
@@ -35,7 +39,6 @@
     ></script>
     <script src="{% static 'libs/sweetalert/js/sweetalert2.all.min.js' %}"></script>
 
-    {% block js %}{% endblock js %}
     <script>
   {% if form.errors %} 
     errors='<ul style="list-style-type: none;">'
@@ -71,5 +74,6 @@ showPasswordCheckbox.addEventListener("change", function() {
 });
 
 </script>
+{% block js %}{% endblock js %}
   </body>
 </html>

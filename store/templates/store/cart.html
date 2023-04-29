@@ -1,57 +1,102 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %} 
 {% if object_list %}
-<div class=" container shadow p-2">
+<div class="container shadow p-2">
   <h1>Checkout</h1>
   <h2>Total <span class="text-success">$</span> {{checkoutValor}}</h2>
 </div>
 <div class="shadow mt-4">
   <table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col"></th>
-      <th scope="col">Producto</th>
-      <th scope="col">Precio</th>
-      <th scope="col">Cantidad</th>
-      <th scope="col">Total</th>
-      <th scope="col">Opciones</th>
-    </tr>
-  </thead>
-  {% for p in object_list %}
-  <tbody>
-    <tr>
-      <td><a href="{% url 'detalle_product' p.product.id %}">
-        <img class="row-image" src="{{p.product.photo.url}}" />
-      </a></td>
-      <td><span>{{p.product.name|title}}</span></td>
-      <td><span>
-        <span class="text-success">$</span>
-        <span id="can-uni">{{p.product.price}}</span>
-      </span></td>
-      <td><span class="quantity">{{p.cantidad}}</span>
-      <div class="quantity flex-column" style="display:inline-flex !important">
-        <a href="{% url 'aumentar_item' p.id %}"
-          ><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"
-        /></a>
-        {% if p.cantidad != 1 %}
-        <a href="{% url 'disminuir_item' p.id %}">
-          <img
-            class="chg-quantity"
-            src="{% static 'images/arrow-down.png' %}"
-          />
-        </a>
-        {% endif %}
-      </div></td>
-      <td><span><span class="text-success">$</span> {{p.total}}</span></td>
-      <td><a class="btn btn-danger" href="{% url 'delete_item_cart' p.id %}"
-        >Eliminar</a
-      ></td>
-    </tr>
-    
-  </tbody>
-  {% endfor %}
-</table>
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Producto</th>
+        <th scope="col">Precio</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Total</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    {% for p in object_list %}
+    <tbody>
+      <tr>
+        <td>
+          <a href="{% url 'detalle_product' p.product.id %}">
+            <img class="row-image" src="{{p.product.photo.url}}" />
+          </a>
+        </td>
+        <td><span>{{p.product.name|title}}</span></td>
+        <td>
+          <span>
+            <span class="text-success">$</span>
+            <span id="can-uni">{{p.product.price}}</span>
+          </span>
+        </td>
+        <td>
+          <span class="quantity">{{p.cantidad}}</span>
+          <div
+            class="quantity flex-column"
+            style="display: inline-flex !important"
+          >
+            <a href="{% url 'aumentar_item' p.id %}"
+              ><img
+                class="chg-quantity"
+                src="{% static 'images/arrow-up.png' %}"
+            /></a>
+            {% if p.cantidad != 1 %}
+            <a href="{% url 'disminuir_item' p.id %}">
+              <img
+                class="chg-quantity"
+                src="{% static 'images/arrow-down.png' %}"
+              />
+            </a>
+            {% endif %}
+          </div>
+        </td>
+        <td>
+          <span><span class="text-success">$</span> {{p.total}}</span>
+        </td>
+        <td>
+          <a
+            class="btn btn-danger btnEliminar"
+            href="{% url 'delete_item_cart' p.id %}"
+            >Eliminar</a
+          >
+        </td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
 </div>
 
 {% else %}
 <h2>No hay productos en el carrito</h2>
-{% endif %} {% endblock content %}
+{% endif %} {% endblock content %} {% block js %}
+<script>
+  $(document).ready(function() {
+  $('.btnEliminar').on('click',function (e) {
+    e.preventDefault();
+    var url = $(this).attr('href');
+    var segments = url.split('/'); // Divide la URL en segmentos
+    var itemId = segments.slice(-2, -1)[0]; //Obtiene el penúltimo segmento
+    //console.log(`itemId: ${itemId} user_id: {{user.id}}`)
+    var datos = JSON.stringify({// Convierte los datos en JSON para poder procesarlos en la vista
+                pk:itemId,
+              user_id:{{user.id}}
+              })
+
+             $.ajax({
+              url:'{% url 'acciones_carrito' %}',
+              type: 'POST',
+              data:datos,
+              dataType: 'json'
+              }).done(function (data) { //Este metodo se ejecuta si la peticion se realiza de manera exitosa
+              console.log(data);
+              }).fail(function (jqXHR,textStatus,errorThrown){ //Este se ejecuta si la peticion tiene algun error
+              alert(`${textStatus} : ${errorThrown}`)
+              }).always(function () { //este se ejecuta siempre
+              })
+
+          })
+        });
+</script>
+{% endblock js %}

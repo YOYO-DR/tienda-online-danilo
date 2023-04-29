@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from .models import Product, Cart, Customer, Cart, CartItem
 from django.views.generic import ListView, DetailView, FormView, DeleteView
 from django.contrib.auth.views import LoginView, LogoutView
 from .form import UserRegisterForm
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout, authenticate
 import json  # para manejar el body del json
 from django.utils import timezone
@@ -169,12 +171,35 @@ class ProductDetailView(DetailView):
         context['title'] = context['object'].name
         return context
 
-# vista para comprar
+#vista para borrar, restar y sumar al carrito
+class CarritoAcciones(View):
+    
+    @method_decorator(csrf_exempt)
+    #@method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+      data=json.loads(request.body) # para convertir a dict los valores del post, van en el body
+      pk=data['pk']
+      user_id=data['user_id']
+      # obtengo el customer del usuario
+      customer = Customer.objects.get(user_id=user_id)
+      # obtengo el carrito del customer
+      cart = Cart.objects.get(user=customer)
+      # obtengo el cartitem del customer y el producto
+      cartItem = CartItem.objects.filter(id=pk, cart=cart)
+      if not cartItem.exists():
+          return HttpResponse('No redirecciona')
+          return redirect('cart')
+      else:
+        # obtengo el carrito
+        cartItem = cartItem.first()
+        print(cartItem)
+        return JsonResponse({'mensaje':f'Exitoso: {cartItem.product.name}'})
 
-
-def checkout(request):
-    context = {}
-    return render(request, 'store/checkout.html', context)
+      return HttpResponse('Hola')
+    
 
 # funcion borrar valor del carrito
 @method_decorator(login_required)
@@ -247,3 +272,8 @@ def disminurCantidad(request, pk):
             cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
             cart.save()
         return redirect('cart')
+
+# vista para comprar
+def checkout(request):
+    context = {}
+    return render(request, 'store/checkout.html', context)
