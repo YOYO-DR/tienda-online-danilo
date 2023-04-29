@@ -11,13 +11,21 @@
     <strong>${{object.price|intcomma}}</strong>
   </h5>
   {% if user.is_authenticated %}
-      <form action="{% url 'store' %}" method='post' style="display:inline;">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="add_cart">
-        <input type="hidden" name="product" value="{{product.id}}">
-        <input type="hidden" name="url_red" value="/cart/">
-        <input class="btn btn-outline-secondary" type="submit" value="Agregar Carrito">
-      </form>
+  <button id="btn-agregar" class="btn btn-outline-secondary">Agregar Carrito</button>
+      
       {% endif %}
 </div>
 {% endblock content %}
+{% block js %}
+<script>
+  //apenas cargue la pagina, le agrego el evento al boton
+$(document).ready(function () {
+  
+  $('#btn-agregar').on("click", function (e) {
+    //apenas le unda, obtengo el id del producto, le paso el link hacia donde va a mandar la petición y la acción
+    carritoAcciones('{{product.id}}',"{% url 'store' %}",'add_cart')
+  })
+})
+
+</script>
+{% endblock js %}

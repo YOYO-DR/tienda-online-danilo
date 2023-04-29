@@ -1,4 +1,5 @@
-function enviar_datos(url, datos, csrftoken, callback) {
+function enviar_datos(url, datos, callback) {
+  const csrftoken = $("[name=csrfmiddlewaretoken]").val(); // obtener el token CSRF del input escondido de la pagina
   $.ajax({
     url: url,
     type: "POST",
@@ -21,39 +22,39 @@ function enviar_datos(url, datos, csrftoken, callback) {
     });
 }
 
-function carritoAcciones(itemId,url,accion, user_id, csrftoken) {
+function carritoAcciones(itemId,url,accion) {
       var datos = JSON.stringify({
         // Convierte los datos en JSON para poder procesarlos en la vista
         pk: itemId,
-        user_id: user_id,
         action: accion,
       });
-  enviar_datos(url, datos, csrftoken, function (data) {
-    if (data["mensaje"]) {
+  enviar_datos(url, datos, function (data) { //funcion si la petición se hace correctamente
+    if (data["mensaje"]) {//si existe la clave mensaje
       Swal.fire({
         position: "top-end",
         icon: "success",
         title: `${data["mensaje"]}`,
         showConfirmButton: false,
         timer: 1500,
-      }).then((result) => {
-        const pTotal = document.getElementById("cart-total"); //poner el total en el carrito
-        pTotal.innerHTML = `${data['can_carrito']}`;
+      }).then((result) => {//despues del modal
+        const pTotal = document.getElementById("cart-total"); //obtengo el p del carrito
+        pTotal.innerHTML = `${data['can_carrito']}`; //le pongo la cantidad
       });
+
       //si es alguna de las 3 acciones del carrito lo pongo aqui 
       if (accion == "eliminar") {
         var trElim = document.getElementById("item-" + itemId); //obtengo el tr del item y lo quito si la petición de eliminar es correcta
         trElim.remove();
-      } else if (accion == "aumentar" || accion == "disminuir") {
+      } else if (accion == "aumentar" || accion == "disminuir") { //si es aumentar o disminuir, modifico el mensaje del modal
         if (accion == "aumentar") {
-          msj = "Se aumento";
+          msj = "Se aumento ";
         } else if (accion == "disminuir") {
-          msj = "Se disminuyó";
+          msj = "Se disminuyó ";
         }
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: msj,
+          title: msj+data['mensaje'],
           showConfirmButton: false,
           timer: 1000,
         }).then((result) => {
@@ -63,9 +64,10 @@ function carritoAcciones(itemId,url,accion, user_id, csrftoken) {
           total.innerHTML = `${data["can_total"].toFixed(2)}`;
         });
       };
+      //independientemente de la accion, eliminar, aumentar o disminuir, se modifica el total del checkout
       const checkputTotal = document.getElementById(`checkout_total`);
       checkputTotal.innerHTML = `${data["check_total"].toFixed(1)}`;
-      if (data['check_total'] == 0) {
+      if (data['check_total'] == 0) { //si el el total del carrito es 0, remplazo todo el contenido y pongo un mensaje
         const contenedorABorrar = document.getElementById("contenedor_todo");
         contenedorABorrar.innerHTML = "<h2>No hay productos en el carrito</h2>";
       }

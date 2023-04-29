@@ -25,7 +25,6 @@ class StoreView(ListView):
 
     def post(self, request, *args, **kwargs):
         data=json.loads(request.body)
-        print(data)
         # miro si existe un action
         action = data['action']
         if action == 'add_cart':
@@ -48,16 +47,14 @@ class StoreView(ListView):
             if not create:
                 # si lo encuentra, le sumo la cantidad en 1, y le asigno el nuevo total
                 cartItem.cantidad += 1
-                cartItem.total = cartItem.product.price*cartItem.cantidad
-            else:
-                # si lo crea, la cantidad se pone por defecto en 1 y le pongo el total
-                cartItem.total = cartItem.product.price*cartItem.cantidad
             cartItem.save()
             now = timezone.now()
             cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
             cart.save()
-        mensaje={'mensaje':f'¡{producto.name} agregado al carrito!',
+            mensaje={'mensaje':f'¡{producto.name} agregado al carrito!',
                  'can_carrito':CartItem.objects.filter(cart=cart).count()}
+        else:
+            mensaje={'error':'Acción no valida'}
         return JsonResponse(mensaje)
 
     def get_queryset(self):
@@ -188,9 +185,9 @@ class CarritoAcciones(View):
       mensaje={}
       data=json.loads(request.body) # para convertir a dict los valores del post, van en el body
       pk=data['pk']
-      user_id=data['user_id']
+      user=request.user
       # obtengo el customer del usuario
-      customer = Customer.objects.get(user_id=user_id)
+      customer = Customer.objects.get(user=user)
       # obtengo el carrito del customer
       cart = Cart.objects.get(user=customer)
       # obtengo todos los cartitems del cart del customer
@@ -212,18 +209,14 @@ class CarritoAcciones(View):
         elif action=='aumentar':
           # aumento la cantidad
           cartItem.cantidad += 1
-          # actualizo el total
-          cartItem.total = cartItem.product.price*cartItem.cantidad
           cartItem.save()
-          mensaje['mensaje']=f'{cartItem.product.name} aumentado'
+          mensaje['mensaje']=f'{cartItem.product.name}'
         elif action=='disminuir':
           if not cartItem.cantidad < 2:
             # aumento la cantidad
             cartItem.cantidad -= 1
-            # actualizo el total
-            cartItem.total = cartItem.product.price*cartItem.cantidad
             cartItem.save()
-            mensaje['mensaje']=f'{cartItem.product.name} disminuido'
+            mensaje['mensaje']=f'{cartItem.product.name}'
           else:
             return JsonResponse({'error':'No se puede disminuir a 1'})
         else:
@@ -234,7 +227,7 @@ class CarritoAcciones(View):
             suma+=cartI.cantidad * cartI.product.price
         #mensajes
         mensaje['can_cantidad']=cartItem.cantidad #cantidad del producto
-        mensaje['can_total']=cartItem.total #cantidad total del producto
+        mensaje['can_total']=cartItem.total() #cantidad total del producto
         mensaje['check_total']=suma #cantidad total de carrito
         
 

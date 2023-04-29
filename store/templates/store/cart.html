@@ -82,7 +82,6 @@ $(document).ready(function () {
   $('.btnAccion').on("click", function (e) {
     //obtengo el boton o boton de link y le agrego el evento
       e.preventDefault(); //detengo el evento de irse a la url
-      const csrftoken = $('[name=csrfmiddlewaretoken]').val(); // obtener el token CSRF del input escondido de la pagina
       var id=$(this).attr("id").split("/");//obtengo el id del boton y lo parto entre la accion y el id del item
       var id_item = id[0] //cojo el id item que esta de primero
       var action=id[1]  //cojo la accion que esta de segunda
@@ -91,9 +90,9 @@ $(document).ready(function () {
       carritoAcciones(
         id_item, //le paso el id del item
         '{% url 'acciones_carrito' %}', //url a donde va la petición
-        action, //accion
-        '{{user.id}}', //id usuario
-        csrftoken)//token de seguridad
+        action //accion
+        
+        )
   })
   })
 

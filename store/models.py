@@ -38,7 +38,9 @@ class CartItem(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, null=False, blank=False)
     cantidad = models.IntegerField(default=0)
-    total = models.DecimalField(decimal_places=2,max_digits=9,default=0)
+
+    def total(self): #en vez de guardar el valor, mejor lo genero
+        return self.cantidad*self.product.price
 
     def __str__(self):
         return f'{self.cantidad} / {self.product.name} - {self.cart.user.name}'
