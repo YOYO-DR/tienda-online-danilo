@@ -1,4 +1,4 @@
-function enviar_datos(url, datos, callback) {
+/* function enviar_datos(url, datos, callback) {
   const csrftoken = $("[name=csrfmiddlewaretoken]").val(); // obtener el token CSRF del input escondido de la pagina
   $.ajax({
     url: url,
@@ -20,14 +20,35 @@ function enviar_datos(url, datos, callback) {
     .always(function () {
       //este se ejecuta siempre
     });
-}
+}*/
+
+//fetch chatgpt
+
+function enviar_datos(url, datos, callback) {
+  const csrftoken = $("[name=csrfmiddlewaretoken]").val(); // obtener el token CSRF del input escondido de la pagina
+
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify(datos), // Convierte los datos en JSON para poder procesarlos en la vista
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      callback(data);
+    })
+    .catch((error) => {
+      alert(error);
+    });
+};
 
 function carritoAcciones(itemId,url,accion) {
-      var datos = JSON.stringify({
-        // Convierte los datos en JSON para poder procesarlos en la vista
+      var datos = {
         pk: itemId,
         action: accion,
-      });
+      };
   enviar_datos(url, datos, function (data) {//funcion si la petición se hace correctamente
     if (data['error']) {
   Swal.fire({
@@ -72,13 +93,21 @@ function carritoAcciones(itemId,url,accion) {
         const cantidad = document.getElementById(`product/${itemId}`); //donde va la cantidad
         const total = document.getElementById(`total_product/${itemId}`); //donde va el total
         cantidad.innerHTML = `${data["can_cantidad"]}`;
-        total.innerHTML = `${data["can_total"].toFixed(2)}`;
+        totalN=data["can_total"].toLocaleString("es-ES", {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        })
+        total.innerHTML = `${totalN}`;
         //});
       }
       if (accion == "aumentar" || accion == "disminuir" || accion == "eliminar") {
         //independientemente de la accion, eliminar, aumentar o disminuir, se modifica el total del checkout
-        const checkputTotal = document.getElementById(`checkout_total`);
-        checkputTotal.innerHTML = `${data["check_total"].toFixed(1)}`;
+        const checkoutTotal = document.getElementById(`checkout_total`);
+        checkTotalN = data["check_total"].toLocaleString("es-ES", { //para convertirlo a numero natural o el intcomma de django
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1,
+        });
+        checkoutTotal.innerHTML = `${checkTotalN}`;
         if (data["check_total"] == 0) {
           //si el el total del carrito es 0, remplazo todo el contenido y pongo un mensaje
           const contenedorABorrar = document.getElementById("contenedor_todo");

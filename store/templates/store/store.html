@@ -35,18 +35,16 @@
   title: 'No se encontró el producto',
   icon: 'question'
 }).then((result) => { //con then recibo el resultado de lo que ponga el usuario, en este caso solo confirma pq solo esta ese boton
-  if (result.isConfirmed) { //si lo confirma, lo redirecciono a la url store
-    window.location.href = "{% url 'store' %}";
-  }
+  window.location.href = "{% url 'store' %}";
+  
 });
 {% else %}
-
-$(document).ready(function () {
+/*$(document).ready(function () {
   //obtengo todos los links con esa clase
   $('.btnAccion').on("click", function (e) {
     //obtengo el boton o boton de link y le agrego el evento
       e.preventDefault(); //detengo el evento de irse a la url
-      const csrftoken = $('[name=csrfmiddlewaretoken]').val(); // obtener el token CSRF del input escondido de la pagina
+      
       var id=$(this).attr("id").split("/");//obtengo el id del boton y lo parto entre la accion y el id del item
       var id_item = id[0] //cojo el id del item que esta de primero
       var action=id[1]  //cojo la accion que esta de segunda
@@ -55,11 +53,34 @@ $(document).ready(function () {
       carritoAcciones(
         id_item, //le paso el id del item
         '{% url 'store' %}', //url a donde va la petición
-        action, //accion
-        '{{user.id}}', //id usuario
-        csrftoken)//token de seguridad
+        action //accion
+        )
   })
-  })
+  })*/
+  // js puro con chatgpt
+  document.addEventListener('DOMContentLoaded', function() {
+  // Obtener todos los elementos con la clase "btnAccion"
+  var botones = document.querySelectorAll('.btnAccion');
+
+  botones.forEach(function(boton) {
+    // Agregar un evento de clic a cada botón
+    boton.addEventListener('click', function(e) {
+      e.preventDefault(); // Detener la acción por defecto del botón
+
+      // Obtener el token CSRF del input escondido de la página
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+      // Obtener el ID del botón y dividirlo entre la acción y el ID del elemento
+      var id = this.getAttribute('id').split('/');
+      var id_item = id[0];
+      var action = id[1];
+
+      // Llamar a la función "carritoAcciones" con los argumentos apropiados
+      carritoAcciones(id_item, '{% url "store" %}', action, '{{user.id}}', csrftoken);
+    });
+  });
+});
+
   {% endif %}
   </script>
 
