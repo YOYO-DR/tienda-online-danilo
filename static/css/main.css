@@ -79,11 +79,6 @@ h6 {
   border-bottom: 1px solid #ececec;
 }
 
-.quantity {
-  display: inline-block;
-  padding-right: 10px;
-}
-
 .chg-quantity {
   width: 12px;
   cursor: pointer;
@@ -100,3 +95,35 @@ h6 {
   display: none !important;
 }
 
+
+.btnCan {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background-color: transparent;
+}
+.cantidad {
+  display:inline-flex ;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+}
+.cantidad span {
+  text-align: center;
+}
+.cantidad button {
+  margin: 0 5px;
+  transition: all ease-in-out .2s;
+}
+th,
+td {
+  text-align: center;
+}
+
+thead th {
+  width: 16%;
+}
+
+thead th:first-child{
+  width: 20%;
+}

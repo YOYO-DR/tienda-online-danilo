@@ -51,7 +51,7 @@ class StoreView(ListView):
             now = timezone.now()
             cart.updated = now.strftime("%Y-%m-%d %H:%M:%S")
             cart.save()
-            mensaje={'mensaje':f'¡{producto.name} agregado al carrito!',
+            mensaje={'mensaje':f'¡{producto.name.title()} agregado al carrito!',
                  'can_carrito':CartItem.objects.filter(cart=cart).count()}
         else:
             mensaje={'error':'Acción no valida'}
@@ -218,7 +218,7 @@ class CarritoAcciones(View):
             cartItem.save()
             mensaje['mensaje']=f'{cartItem.product.name}'
           else:
-            return JsonResponse({'error':'No se puede disminuir a 1'})
+            return JsonResponse({'error':'menos 1'})
         else:
           return JsonResponse({'error':'Opción no valida'})
         # suma de todo el carrito

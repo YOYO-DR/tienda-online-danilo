@@ -15,7 +15,7 @@
       </h4>
       <hr />
       {% if user.is_authenticated %}
-        <a id="{{product.id}}/add_cart" href="#" class="btn btn-outline-secondary btnAccion">Agregar Carrito</a>
+        <button id="{{product.id}}/add_cart" href="#" class="btn btn-outline-secondary btnAccion">Agregar Carrito</button>
       {% endif %}
       
       <a class="btn btn-outline-success" href="{% url 'detalle_product' product.id %}">Ver</a>
