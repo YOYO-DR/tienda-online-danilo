@@ -218,7 +218,7 @@ class CarritoAcciones(View):
             cartItem.save()
             mensaje['mensaje']=f'{cartItem.product.name}'
           else:
-            return JsonResponse({'error':'menos 1'})
+            return JsonResponse({'error':'La cantidad es 1, no se puede restar'})
         else:
           return JsonResponse({'error':'Opción no valida'})
         # suma de todo el carrito

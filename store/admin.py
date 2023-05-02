@@ -6,5 +6,6 @@ admin.site.register(
     [Customer, 
      Product,
      Cart,
-     CartItem
+     CartItem,
+     CategoryProduct
      ])
