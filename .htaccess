@@ -1,2 +1,2 @@
 RewriteEngine On
-RewriteRule ^media/(.*)$ /path/to/media/$1 [L]
+RewriteRule ^media/(.*)$ /media/$1 [L]
