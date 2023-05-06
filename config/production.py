@@ -1,15 +1,13 @@
 import os
 
-from .settings import *  # importamos todo
-from .settings import BASE_DIR  # importamos la ruta de inicio
+from .settings import * #importamos todo
+from .settings import BASE_DIR # importamos la ruta de inicio
 
 # se agrega los host por medio de las variables de entono que me da Azure
-ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']
-                 ] if 'WEBSITE_HOSTNAME' in os.environ else []
-# se pone las rutas de seguridad
-CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']
-                        ] if 'WEBSITE_HOSTNAME' in os.environ else []
-# ponemos el DEBUG en false porque se va a ejecutar en produccion
+ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
+#se pone las rutas de seguridad
+CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
+#ponemos el DEBUG en false porque se va a ejecutar en produccion
 DEBUG = False
 
 MIDDLEWARE = [
@@ -27,19 +25,18 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Pedimos la config de la base de datos
+#Pedimos la config de la base de datos
 conn_str = os.environ['AZURE_MYSQL_CONNECTIONSTRING']
 
 
-# extraemos los valores, y los ponemos en un diccionario para llamarlos mejor
-conn_str_params = {pair.split('=')[0]: pair.split(
-    '=')[1] for pair in conn_str.split(' ')}
+#extraemos los valores, y los ponemos en un diccionario para llamarlos mejor
+conn_str_params = {pair.split('=')[0]: pair.split('=')[1] for pair in conn_str.split(' ')}
 
-# Este es el valor de la variable de entono que se utiliza en Azure, puede utilizarlas independientemente en azure si quiere, lo utilizao de esta forma para solo poner una sola variable de entorno
+#Este es el valor de la variable de entono que se utiliza en Azure, puede utilizarlas independientemente en azure si quiere, lo utilizao de esta forma para solo poner una sola variable de entorno
 
-# AZURE_MYSQL_CONNECTIONSTRING = dbname=nombreBD host=elHost port=3306 sslmode=require user=usuario password=pass
+#AZURE_MYSQL_CONNECTIONSTRING = dbname=nombreBD host=elHost port=3306 sslmode=require user=usuario password=pass
 
-# los ponemos en la config de la base de datos
+#los ponemos en la config de la base de datos
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -49,3 +46,5 @@ DATABASES = {
         'PASSWORD': conn_str_params['password'],
     }
 }
+
+#AZURE_MYSQL_CONNECTIONSTRING = dbname=nombreBD host=elHost port=3306 sslmode=require user=usuario password=pass
