@@ -21,13 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d4dk*(ak2!yli%4_r__%x&1+4z)ynv6nwhnqu81fqkh_)^2fuv'
+# llave secreta me la da Azure
+SECRET_KEY = os.getenv('SECRET_KEY', default='your secret key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# En resumen, esta configuración asegura que solo los orígenes especificados en la lista CSRF_TRUSTED_ORIGINS sean considerados como seguros para realizar solicitudes POST, PUT, DELETE, etc. y protege la aplicación Django de los ataques CSRF.
+if 'CODESPACE_NAME' in os.environ:
+    CSRF_TRUSTED_ORIGINS = [
+        f'https://{os.getenv("CODESPACE_NAME")}-8000.{os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")}']
 
 # Application definition
 
@@ -38,6 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Un conjunto de filtros de plantilla de Django útiles para agregar un "toque humano" a los datos.
+    # https://docs.djangoproject.com/en/4.2/ref/contrib/humanize/
+    'django.contrib.humanize',
+    'widget_tweaks',
     'store'
 ]
 
@@ -110,8 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'UTC'
-
+# TIME_ZONE = 'UTC'
+# para que ponga mi hora
+TIME_ZONE = 'America/Bogota'
 USE_I18N = True
 
 USE_TZ = True
@@ -131,5 +141,7 @@ MEDIA_URL = 'public/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 LOGIN_REDIRECT_URL = 'store'
-LOGIN_URL='login'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'store'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
