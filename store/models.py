@@ -43,7 +43,7 @@ class Product(models.Model):
     
     def save(self, *args, **kwargs):
         if self.photo:
-            subirAzureBlobs(self,tipo_a='image') # Función para subir las fotos a azure blobs storage
+          self.photo=subirAzureBlobs(self,tipo_a='image') # Función para subir las fotos a azure blobs storage
         super().save(*args, **kwargs)
 
     class Meta:

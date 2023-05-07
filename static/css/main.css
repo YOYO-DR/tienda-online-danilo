@@ -128,6 +128,6 @@ thead th:first-child{
   width: 20%;
 }
 .max-width {
-  max-width: 416px !important;
-  min-width: 416px !important;
+  max-width: 380px !important; 
+  min-width: 379px !important; 
 }

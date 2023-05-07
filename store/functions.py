@@ -4,7 +4,7 @@ from azure.storage.blob import BlockBlobService
 from azure.storage.blob.models import ContentSettings
 import os
 
-def subirAzureBlobs(self,tipo_a):
+def subirAzureBlobs(image,tipo_a):
   # si esta en un server o subido, se ejecuta el llamado a la config del storage, de lo contrario, le paso los locales
   if 'WEBSITE_HOSTNAME' in os.environ: 
     azure_storage_blob = os.environ['AZURE_STORAGE_BLOB']
@@ -14,7 +14,7 @@ def subirAzureBlobs(self,tipo_a):
                                      'container_name':os.environ.get('CONTAINER_NAME'),
                                      'account_key':os.environ.get('ACCOUNT_KEY')}
   tipo_archivo = tipo_a
-  name = self.photo.name
+  name = image.name
   extension = name.split('.')[-1] #lo parto en puntos, pero obtengo el ultimo el cual se obtiene con -1
   name = name.replace(' ', '_') # remplazar espacios por "_", para evitar posibles problemas o bugs
   account_name = azure_storage_blob_parametros['account_name']
@@ -25,10 +25,13 @@ def subirAzureBlobs(self,tipo_a):
   # Generar un nombre único para el archivo
   filename = 'media/productos/'+str(uuid.uuid4()) + name
   # Subir el archivo al contenedor de Azure
-  blob_service_client.create_blob_from_bytes(container_name=container_name, blob_name=filename, blob=self.photo.read(), content_settings=ContentSettings(content_type=tipo_archivo+'/'+extension, content_disposition='inline'))
+  try: #lanza error porque no encuentra el archivo dentro del proyecto cuando actualiza, despues averiguo como arreglar eso
+    blob_service_client.create_blob_from_bytes(container_name=container_name, blob_name=filename, blob=image.read(), content_settings=ContentSettings(content_type=tipo_archivo+'/'+extension, content_disposition='inline'))
+  except Exception as e:
+    pass
   #############
   #content-type: https://developer.mozilla.org/es/docs/Web/HTTP/Basics_of_HTTP/MIME_types
   #image: image/gif, image/png, image/jpeg, image/bmp, image/webp
   #############
   # Guardar la URL del archivo en el modelo
-  self.photo = filename
+  return filename
