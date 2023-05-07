@@ -7,7 +7,7 @@
 {% endif %}
 <div class="row justify-content-center">
   {% for product in object_list %}
-  <div class="col-lg-4 max-width">
+  <div class="col-lg-4 mb-5 max-width ">
     <img class="thumbnail img-fluid" src="{{product.get_photo}}" />
     <div class="box-element product">
       <h4 {% if product.digital %} class="text-success" {% endif %}>
