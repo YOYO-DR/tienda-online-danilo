@@ -21,13 +21,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# agregamos el storage, en este caso, de azure
-STORAGES = {
-    "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
-    "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
-    "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
-}
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# acomodamos el static root, el storage ya se esta utilizando local y en producccion
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 #Pedimos la config de la base de datos
 conn_str = os.environ['AZURE_MYSQL_CONNECTIONSTRING']
