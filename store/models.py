@@ -29,7 +29,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField()
     digital = models.BooleanField(default=False, null=True, )
-    photo = models.ImageField(upload_to="products/%Y/%m", null=True, blank=True)
+    photo = models.ImageField(upload_to="media/products/%Y/%m", null=True, blank=True)
     category=models.ForeignKey(CategoryProduct, on_delete=models.CASCADE,null=False,blank=False)
 
     def __str__(self):
@@ -41,16 +41,14 @@ class Product(models.Model):
         return f'{STATIC_URL}images/empty.png'
           
     
-    def save(self, *args, **kwargs):
-        if self.photo:
-          subirAzureBlobs(self,tipo_a='image') # Función para subir las fotos a azure blobs storage
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.photo:
+    #       subirAzureBlobs(self,tipo_a='image') # Función para subir las fotos a azure blobs storage
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
-    
-
 
 class Cart(models.Model):
     user = models.ForeignKey(

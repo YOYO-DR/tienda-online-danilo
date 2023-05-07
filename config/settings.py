@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     # Un conjunto de filtros de plantilla de Django útiles para agregar un "toque humano" a los datos.
     # https://docs.djangoproject.com/en/4.2/ref/contrib/humanize/
     'django.contrib.humanize',
@@ -133,9 +134,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = '/static/'
 
 # asi configuro la carpeta la cual guarda los archivos, pero es privada
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # asi ya se puede acceder desde el front, puede ser media o cualquier otra cosa, y se debe poner la ruta en las urls del config o proyecto
-MEDIA_URL = 'https://tiendadjango.blob.core.windows.net/tiendadjango/'
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -145,3 +146,14 @@ LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'store'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#almacenmiento azure
+# Configuración para el diccionario de storages
+AZURE_CONTAINER = os.environ.get('CONTAINER_NAME')
+AZURE_ACCOUNT_NAME = os.environ.get('ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = os.environ.get('ACCOUNT_KEY')
+STORAGES = {
+    "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
+    "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
+    "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
+}

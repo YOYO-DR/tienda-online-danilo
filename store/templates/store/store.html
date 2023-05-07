@@ -30,7 +30,7 @@
 
 {% block js %}
 <script>
-{% if not object_list %}
+{% if mensaje_busqueda %}
   Swal.fire({
   title: 'No se encontró el producto',
   icon: 'question'
