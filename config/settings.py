@@ -149,9 +149,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #almacenmiento azure
 # Configuración para el diccionario de storages
-AZURE_CONTAINER = os.environ.get('CONTAINER_NAME')
-AZURE_ACCOUNT_NAME = os.environ.get('ACCOUNT_NAME')
-AZURE_ACCOUNT_KEY = os.environ.get('ACCOUNT_KEY')
+# si estamos en producción o desarrollo, y saber de donde traer la configuración
+if 'WEBSITE_HOSTNAME' in os.environ: 
+    azure_storage_blob = os.environ['AZURE_STORAGE_BLOB']
+    azure_storage_blob_parametros = {parte.split(' = ')[0]:parte.split(' = ')[1] for parte in azure_storage_blob.split('  ')}
+else:
+    azure_storage_blob_parametros = {'account_name':os.environ.get('ACCOUNT_NAME'),
+                                     'container_name':os.environ.get('CONTAINER_NAME'),
+                                     'account_key':os.environ.get('ACCOUNT_KEY')}
+
+AZURE_CONTAINER = azure_storage_blob_parametros['container_name']
+AZURE_ACCOUNT_NAME = azure_storage_blob_parametros['account_name']
+AZURE_ACCOUNT_KEY = azure_storage_blob_parametros['account_key']
 STORAGES = {
     "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
     "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
