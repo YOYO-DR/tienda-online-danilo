@@ -16,6 +16,7 @@ def subirAzureBlobs(self,tipo_a):
   tipo_archivo = tipo_a
   name = self.photo.name
   extension = name.split('.')[-1] #lo parto en puntos, pero obtengo el ultimo el cual se obtiene con -1
+  name = name.replace(' ', '_') # remplazar espacios por "_", para evitar posibles problemas o bugs
   account_name = azure_storage_blob_parametros['account_name']
   container_name = azure_storage_blob_parametros['container_name']
   account_key=azure_storage_blob_parametros['account_key']
