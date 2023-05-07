@@ -26,7 +26,13 @@ def subirAzureBlobs(image,tipo_a):
   filename = 'media/productos/'+str(uuid.uuid4()) + name
   # Subir el archivo al contenedor de Azure
   try: #lanza error porque no encuentra el archivo dentro del proyecto cuando actualiza, despues averiguo como arreglar eso
-    blob_service_client.create_blob_from_bytes(container_name=container_name, blob_name=filename, blob=image.read(), content_settings=ContentSettings(content_type=tipo_archivo+'/'+extension, content_disposition='inline'))
+    if blob_service_client.exists(container_name, filename):
+        # Si existe, sobrescribe el archivo
+        blob_service_client.create_blob_from_bytes(container_name=container_name, blob_name=filename, blob=image.read(), content_settings=ContentSettings(content_type=tipo_archivo+'/'+extension, content_disposition='inline'), overwrite=True)
+    else:
+        # Si no existe, lo crea
+        blob_service_client.create_blob_from_bytes(container_name=container_name, blob_name=filename, blob=image.read(), content_settings=ContentSettings(content_type=tipo_archivo+'/'+extension, content_disposition='inline'))
+    
   except Exception as e:
     pass
   #############
