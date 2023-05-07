@@ -8,7 +8,7 @@ def subirAzureBlobs(self,tipo_a):
   # si esta en un server o subido, se ejecuta el llamado a la config del storage, de lo contrario, le paso los locales
   if 'WEBSITE_HOSTNAME' in os.environ: 
     azure_storage_blob = os.environ['AZURE_STORAGE_BLOB']
-    azure_storage_blob_parametros = {parte.split('=')[0]:parte.split('=')[1] for parte in azure_storage_blob.split(' ')}
+    azure_storage_blob_parametros = {parte.split(' = ')[0]:parte.split(' = ')[1] for parte in azure_storage_blob.split('  ')}
   else:
     azure_storage_blob_parametros = {'account_name':os.environ.get('ACCOUNT_NAME'),
                                      'container_name':os.environ.get('CONTAINER_NAME'),
