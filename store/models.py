@@ -37,7 +37,7 @@ class Product(models.Model):
     
     def get_photo(self):
         if self.photo: #si tiene foto, la paso con la media url porque es un link externo, de lo contrario, una imagen de que no esta
-            return f'{MEDIA_URL}{self.photo}'
+            return f'https://tiendadjango.blob.core.windows.net/tiendadjango/{self.photo}'
         return f'{STATIC_URL}images/empty.png'
           
     
