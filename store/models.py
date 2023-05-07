@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-# Create your models here.
-
+from store.functions import *
+from config.settings import MEDIA_URL, STATIC_URL
 
 class Customer(models.Model):
     user = models.OneToOneField(
@@ -30,15 +29,27 @@ class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField()
     digital = models.BooleanField(default=False, null=True, )
-    photo = models.ImageField(upload_to="products/%Y/%m", default=False)
+    photo = models.ImageField(upload_to="products/%Y/%m", null=True, blank=True)
     category=models.ForeignKey(CategoryProduct, on_delete=models.CASCADE,null=False,blank=False)
 
     def __str__(self):
         return f'{self.id} {self.name}'
     
+    def get_photo(self):
+        if self.photo: #si tiene foto, la paso con la media url porque es un link externo, de lo contrario, una imagen de que no esta
+            return f'{MEDIA_URL}{self.photo}'
+        return f'{STATIC_URL}images/empty.png'
+          
+    
+    def save(self, *args, **kwargs):
+        if self.photo:
+            subirAzureBlobs(self,tipo_a='image') # Función para subir las fotos a azure blobs storage
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
+    
 
 
 class Cart(models.Model):

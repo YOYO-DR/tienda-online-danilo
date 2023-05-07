@@ -34,7 +34,6 @@ conn_str_params = {pair.split('=')[0]: pair.split('=')[1] for pair in conn_str.s
 
 #Este es el valor de la variable de entono que se utiliza en Azure, puede utilizarlas independientemente en azure si quiere, lo utilizao de esta forma para solo poner una sola variable de entorno
 
-#AZURE_MYSQL_CONNECTIONSTRING = dbname=nombreBD host=elHost port=3306 sslmode=require user=usuario password=pass
 
 #los ponemos en la config de la base de datos
 DATABASES = {

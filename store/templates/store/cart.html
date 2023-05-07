@@ -28,7 +28,7 @@
         <tr id="item-{{p.id}}" class="">
           <td>
             <a href="{% url 'detalle_product' p.product.id %}">
-              <img class="row-image" src="{{p.product.photo.url}}" />
+              <img class="row-image" src="{{p.product.get_photo}}" />
             </a>
           </td>
           <td><span>{{p.product.name|title}}</span></td>

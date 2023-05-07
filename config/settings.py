@@ -133,9 +133,9 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = '/static/'
 
 # asi configuro la carpeta la cual guarda los archivos, pero es privada
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # asi ya se puede acceder desde el front, puede ser media o cualquier otra cosa, y se debe poner la ruta en las urls del config o proyecto
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://tiendadjango.blob.core.windows.net/tiendadjango/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

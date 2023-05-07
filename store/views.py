@@ -241,3 +241,32 @@ class CarritoAcciones(View):
 def checkout(request):
     context = {}
     return render(request, 'store/checkout.html', context)
+
+#subir
+# from django.views import View
+# from django.http import JsonResponse
+# import uuid
+# from azure.storage.blob import BlockBlobService
+# from azure.storage.blob.models import ContentSettings
+
+# class Uploader(View):
+#     @method_decorator(csrf_exempt)
+#     def dispatch(self, request, *args, **kwargs):
+#         return super().dispatch(request, *args, **kwargs)
+#     def post(self, request):
+#         try:
+#             archivo = request.FILES['archivo']
+#             filename = archivo.name
+#             file_upload_name = 'media/productos/'+str(uuid.uuid4()) + filename
+#             blob_service_client = BlockBlobService(account_name = 'tiendadjango', account_key='ZhNXQlmnP+OFD8CSZlX5uA8Amv5zMxHqtf3giABgeeVGuwN2PVWTTf5XwKqBdhmyp1XwGlezofYB+ASthbBimQ==')
+#             blob_service_client.create_blob_from_bytes( container_name = 'tiendadjango', blob_name = file_upload_name, blob = archivo.read(), content_settings = ContentSettings(content_type='image/png', content_disposition='inline'))
+#             # Guardar el archivo en el modelo
+#             archivo_modelo = Product.objects.create(photo=file_upload_name,name='Prueba',price=12345,digital=True,category_id=1)
+#             return JsonResponse( { "status": "success", "uploaded_file_name": file_upload_name}, status=201)
+#         except:
+#             return JsonResponse({ "status": "error", "message": "Mensaje de error" }, status=400)
+
+
+
+#https://tiendadjango.blob.core.windows.net/tiendadjango/de35742b-fbc2-47b6-ba6b-e290cb9ed1f3black%20shark.png
+#https://tiendadjango.blob.core.windows.net/tiendadjango/media/de35742b-fbc2-47b6-ba6b-e290cb9ed1f3black%20shark.png
