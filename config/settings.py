@@ -167,4 +167,4 @@ STORAGES = {
     # "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
 }
 
-MEDIA_URL = f'https://tiendadjango.blob.core.windows.net/{AZURE_CONTAINER}/'
+MEDIA_URL = f'https://djangoyoiner.blob.core.windows.net/{AZURE_CONTAINER}/'

@@ -131,3 +131,7 @@ thead th:first-child{
   max-width: 380px !important; 
   min-width: 379px !important;
 }
+
+.min-width-cart {
+  min-width: 768px !important;
+}
