@@ -60,10 +60,10 @@ class StoreView(ListView):
     def get_queryset(self):
         busqueda = self.request.GET.get('busqueda')
         if busqueda:
-            query = Product.objects.filter(name__icontains=busqueda)
+            query = Product.objects.filter(name__icontains=busqueda).order_by('name')
             return query
         else:
-            return super().get_queryset()
+            return Product.objects.all().order_by('name')
 
     def get_context_data(self, **kwargs):
         # recupero el context para enviar datos
