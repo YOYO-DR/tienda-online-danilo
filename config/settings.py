@@ -164,7 +164,7 @@ AZURE_ACCOUNT_KEY = azure_storage_blob_parametros['account_key']
 STORAGES = {
     "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
     "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
-    # "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
+    "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
 }
 
 MEDIA_URL = f'https://djangoyoiner.blob.core.windows.net/{AZURE_CONTAINER}/'
