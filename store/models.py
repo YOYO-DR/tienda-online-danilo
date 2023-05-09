@@ -37,8 +37,8 @@ class Product(models.Model):
         return f'{self.id} {self.name}'
     
     def get_photo(self):
-        if self.photo: #si tiene foto, la paso con la media url porque es un link externo, de lo contrario, una imagen de que no esta
-            return f'{MEDIA_URL}{self.photo}'
+        if self.photo: #si tiene foto, le paso la url normal, de lo contrario, una imagen de que no esta
+            return self.photo.url
         return f'{STATIC_URL}images/empty.png'
           
     
