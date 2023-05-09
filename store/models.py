@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from store.functions import *
 from config.settings import MEDIA_URL, STATIC_URL
 
 class Customer(models.Model):
