@@ -29,7 +29,7 @@ class Product(models.Model):
     price = models.FloatField()
     digital = models.BooleanField(default=False, null=True, )
     #para que se guarde en azure en la carpeta media, igual debe estar el media_url como '/media/' para concatenarlo en el get_photo
-    photo = models.ImageField(upload_to="media/products/%Y/%m", null=True, blank=True)
+    photo = models.ImageField(upload_to=f"{MEDIA_URL}products/%Y/%m", null=True, blank=True)
     category=models.ForeignKey(CategoryProduct, on_delete=models.CASCADE,null=False,blank=False)
 
     def __str__(self):
